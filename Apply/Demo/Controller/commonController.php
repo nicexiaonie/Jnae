@@ -1,10 +1,15 @@
 <?php
 
-class commonController extends Controller{
+namespace Demo\Controller;
+
+use Demo\Controller\Index\IndexController;
+
+class CommonController extends IndexController{
 
 
 	public function _initialize(){
 		show('success:('.__FILE__.')');
+		parent::_initialize();
 	}
 
 

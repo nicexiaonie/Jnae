@@ -27,7 +27,6 @@ class Config  {
 	static $file_path_tmp = array();
 	public function load( $file = '' , $fail_gracefully = false){
 
-		//show($this->_config_paths);
 		//屏蔽重复加载
 			if(!empty(self::$file_path_tmp[$file])) return true;
 			self::$file_path_tmp[$file] = 1;
@@ -53,16 +52,13 @@ class Config  {
 					}
 					//show($file_path);
 					trace_add('load_config',$file_path);	//记录加载文件
-					if($file == 'config'){
-						//show($config);
-					}
+
 					$loaded = true;
 				}
 			}
 
 		$result = array();
-		foreach($config as $k => $v){
-			//$v = array_filter($v);	//去空
+		foreach($config as $v){
 			if(!empty($v)) $result = array_merge($result,$v);
 		}
 
@@ -74,13 +70,9 @@ class Config  {
 		if($fail_gracefully){
 			return false;
 		}
-
 		show_error('Configuration file does not exist: '.$file);
-		
-		
+
 	}
-
-
 
 	/*
 	 * 	获取配置
@@ -93,15 +85,12 @@ class Config  {
 	 */
 	public function item($key = '' , $name = ''){
 		empty($name) ? $config = $this->config : $config = $this->$name;
+
 		if(empty($key)) return empty($config) ? false : $config;
-
 		$key = explode('/',$key);
-
 		foreach($key as $v){
-			//if(!isset($config[$v])) return false;
 			$config = $config[$v];
 		}
-
 		return $config;
 
 	}

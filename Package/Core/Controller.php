@@ -1,17 +1,14 @@
 <?php
 namespace Core;
 
-//use Core\Template;
-
+use View\View;
 
 abstract class Controller{
 
+
 	private  $_get_instance;
 
-
-
-
-	public function __construct($app){
+	public function __construct(){
 		$this->_get_instance = get_instance();
 
 	}
@@ -23,8 +20,8 @@ abstract class Controller{
 			$this->_initialize();
 		$function_name = $this->uri->function_name;
 
-		if(!method_exists($this,$function_name)) $this->error('This function/action('.$function_name.') does not exist');
-
+		if(!method_exists($this,$function_name))
+			show_error('This function/action('.$function_name.') does not exist');
 
 		$before_function_name = '_before_'.$function_name;
 		if(method_exists($this,$before_function_name))
@@ -37,9 +34,8 @@ abstract class Controller{
 			$this->$after_function_name();
 
 		if(C('view_auto')){
-			$this->display();
+			View::display();
 		}
-
 	}
 
 	/*
@@ -50,10 +46,8 @@ abstract class Controller{
 		return ($this->_get_instance->$name);
 	}
 
-
 	/*
 	 * 	当方法不存在是调用  优先级
-	 * 		模版驱动
 	 * 		APP超级对象
 	 *
 	 */
@@ -64,21 +58,16 @@ abstract class Controller{
 			$object = $this->_get_instance;
 		else
 			show_error('This method('.$key.') does not exist');
-
-
 		list($value1,$value2,$value3,$value4) = $value;
-
 		if(method_exists($object,$key))
 			$result = $object->$key(
 				$value1,
 				$value2
 			);
 		return $this;
-
 	}
 
 	public function  __destruct(){
-
 
 	}
 

@@ -72,14 +72,6 @@ function D($value = null , $layer = null){
 
 	$module_name = $_get_instance->uri->module_name;	//当前模块
 
-	if(empty($layer)){
-		$model_suffix = 'Model.php';	//模型后缀
-		$class_suffix = 'Model';
-	}else{
-		$model_suffix = $layer.'.php';	//模型后缀
-		$class_suffix = $layer;
-	}
-
 	if(count($value) == 1){
 		//当前模块
 		$value = $value[0];
@@ -88,24 +80,12 @@ function D($value = null , $layer = null){
 		$value = $value[1];
 	}
 
-	$app_path = APP_PATH.$module_name.'/Model/';	//模块目录
-	$model_file = $app_path.$value.$model_suffix;	//模块文件
+	empty($layer) ? $layer = 'Model' : 1 ;
+	$class = '\\'.$module_name.'\\Model\\'.implode('\\',explode('/',$value)).$layer;
 
-	if(is_file($model_file)){
-		require_once($model_file);
-		trace_add('load_file',$model_file);	//记录加载文件
-		$class_name = explode('/',$value);
-		$class_name = array_pop($class_name).$class_suffix;
-		if(class_exists($class_name)){
-			$model_store[$key_code] = new $class_name();
-			return $model_store[$key_code];
-		}else{
-			show_error('Class( '.$class_name.' ) does not exist');
-			return false;
-		}
-	}else{
-		show_error('Model file does not exist, File: '.$model_file);
-	}
+	$model_store[$key_code] = new $class();
+
+	return $model_store[$key_code];
 
 }
 
@@ -520,21 +500,19 @@ function _filtration($data,$filtration)
 function U($value = null,$param = array()){
 	C('URI:IS_BASE_URL') ? $result = base_url() : $result = '';
 
+	if(defined('MODULE_NAME'))
+		$path[C('URI:module_trigger')] = MODULE_NAME;
+	if(defined('DIRECTORY_NAME') && C('URI:module_'.MODULE_NAME.'/is_group'))
+		$path[C('URI:directory_trigger')] = DIRECTORY_NAME;
+	if(defined('CONTROLLER_NAME'))
+		$path[C('URI:controller_trigger')] = CONTROLLER_NAME;
+	if(defined('FUNCTION_NAME'))
+		$path[C('URI:function_trigger')] = FUNCTION_NAME;
 
-	if(empty($value)){
+	if(!empty($value)) $value = explode('/',$value);
 
-		if(defined('MODULE_NAME')) $path[C('URI:module_trigger')] = MODULE_NAME;
-		if(defined('DIRECTORY_NAME') && C('URI:module_'.MODULE_NAME.'/is_group')) $path[C('URI:directory_trigger')] = DIRECTORY_NAME;
-		if(defined('CONTROLLER_NAME')) $path[C('URI:controller_trigger')] = CONTROLLER_NAME;
-		if(defined('FUNCTION_NAME')) $path[C('URI:function_trigger')] = FUNCTION_NAME;
-	}else{
-		$path = explode('/',$value);
-		$path_tmp = $path;
-		unset($path);
-		if(!empty($path_tmp[0])) $path[C('URI:module_trigger')] = $path_tmp[0];
-		if(!empty($path_tmp[1])) $path[C('URI:directory_trigger')] = $path_tmp[1];
-		if(!empty($path_tmp[2])) $path[C('URI:controller_trigger')] = $path_tmp[2];
-		if(!empty($path_tmp[3])) $path[C('URI:function_trigger')] = $path_tmp[3];
+	foreach(array_reverse($path) as $k=>$v){
+		if(!empty($value)) $path[$k] = array_pop($value);
 	}
 
 	switch(C('uri:protocol')){
@@ -543,20 +521,18 @@ function U($value = null,$param = array()){
 			break;
 		case 'QUERY_STRING':
 			$result .= '/' . trim($_SERVER['SCRIPT_NAME'],'/');
-
 			break;
 		default :
 			break;
 	}
-
 	if(!empty($param)){
+
 		if(!empty($path)) $param = array_merge($path,$param);
 	}else{
 		$param = $path;
 	}
+
 	if(!empty($param)) $result .= '?' . (http_build_query($param));
-
-
 
 	return $result;
 }
@@ -567,12 +543,16 @@ function U($value = null,$param = array()){
 function self_url($param = null){
 	C('URI:IS_BASE_URL') ? $result = base_url() : $result = '';
 
-	if(defined('MODULE_NAME')) $path[C('URI:module_trigger')] = MODULE_NAME;
-	if(defined('DIRECTORY_NAME') && C('URI:module_'.MODULE_NAME.'/is_group')) $path[C('URI:directory_trigger')] = DIRECTORY_NAME;
-	if(defined('CONTROLLER_NAME')) $path[C('URI:controller_trigger')] = CONTROLLER_NAME;
-	if(defined('FUNCTION_NAME')) $path[C('URI:function_trigger')] = FUNCTION_NAME;
+	if(defined('MODULE_NAME'))
+		$path[C('URI:module_trigger')] = MODULE_NAME;
+	if(defined('DIRECTORY_NAME') && C('URI:module_'.MODULE_NAME.'/is_group'))
+		$path[C('URI:directory_trigger')] = DIRECTORY_NAME;
+	if(defined('CONTROLLER_NAME'))
+		$path[C('URI:controller_trigger')] = CONTROLLER_NAME;
+	if(defined('FUNCTION_NAME'))
+		$path[C('URI:function_trigger')] = FUNCTION_NAME;
 
-
+show();
 	switch(C('URI:protocol')){
 		case 'PATH_INFO':
 			$result .= '/' . implode('/',$path) . C('URI:URL_SUFFIX'); unset($path);

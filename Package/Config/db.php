@@ -4,7 +4,7 @@ return array(
 
 	'default'	=>	array(
 		//驱动类型
-		'driver'    =>   'medoo',
+		'driver'    =>   'jnae',
 
 		//数据库类型。如：mysql、postgres、odbc 等。必须为小写字母
 		'dbdriver' => 'mysql',

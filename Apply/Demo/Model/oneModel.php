@@ -1,6 +1,7 @@
 <?php
+namespace Demo\Model;
 
-class oneModel{
+class OneModel{
 
 
 	public function __construct(){

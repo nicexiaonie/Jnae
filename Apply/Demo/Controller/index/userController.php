@@ -1,6 +1,10 @@
 <?php
 
-class userController extends Controller{
+namespace Demo\Controller\Index;
+use Core\Controller;
+
+
+class UserController extends Controller{
 
 
 	public function _initialize(){

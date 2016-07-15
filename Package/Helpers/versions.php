@@ -1,13 +1,5 @@
 <?php
 
-
-// ------------------------------------------------------------------------
-
-defined('PASSWORD_BCRYPT') OR define('PASSWORD_BCRYPT', 1);
-defined('PASSWORD_DEFAULT') OR define('PASSWORD_DEFAULT', PASSWORD_BCRYPT);
-
-// ------------------------------------------------------------------------
-
 if ( ! function_exists('password_get_info'))
 {
 	/**

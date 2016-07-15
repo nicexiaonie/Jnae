@@ -19,7 +19,7 @@ return array(
 	//模版文件后缀
 	'template_suffix' => '.html',
 	//是否开启页面静态缓存
-	'template_cache' => true,
+	'template_cache' => false,
 	//静态缓存周期
 	'template_cache_lifetime' => 110,
 	//是否每次都进行重新编译
@@ -107,6 +107,15 @@ return array(
 	'csrf_token_name'	=>	'123',	//POST的key
 	'csrf_cookie_name'	=>	'124',	//csrf前缀	csrf的KEY由cookie前缀加csrf前缀
 	'csrf_exclude_uris'	=>	array(),	//忽略的uri
+
+
+
+
+	/*
+	 * 	分页
+	 */
+	'VAR_PAGE'	=>	'p',	//分页参数名称
+
 
 
 

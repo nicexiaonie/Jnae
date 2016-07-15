@@ -1,11 +1,14 @@
 <?php
+namespace Demo\Model\Member;
 
-class loginModel extends oneModel{
+use \Demo\Model\OneModel;
+class LoginModel extends OneModel{
 
 
 	public function __construct(){
-		parent::__construct();
 		show('success_:('.__FILE__.')');
+		parent::__construct();
+
 	}
 
 

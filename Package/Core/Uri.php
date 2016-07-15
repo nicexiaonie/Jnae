@@ -40,7 +40,6 @@ class Uri {
 			$this->_set_uri_string($uri);
 
 		//step2、确定模块 分组  控制器 操作  并给予默认
-
 			//$result = (Object)array();
 			//确定模块
 			(empty($this->segments)) ?

@@ -43,7 +43,7 @@ class smartyDriver {
 		//初始化 Smarty 配置
 			$this->Smarty->compile_dir = $compile_dir;	//设置编译目录
 			$this->Smarty->template_dir = dirname($file_path);	//设置模版目录
-			$this->Smarty->cache_dir  = RUNTIME_DIR.'cache/';	//设置缓存目录
+			$this->Smarty->cache_dir  = $cache_dir;	//设置缓存目录
 			$this->Smarty->caching = C('template_cache');   //开启缓存
 			$this->Smarty->cache_lifetime = C('template_cache_lifetime');  //缓存存活时间（秒）
 			$this->Smarty->compile_check = false;	//编译检查变量，如果开启此变量，smarty会检查模板文件是否改动过，

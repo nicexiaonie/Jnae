@@ -54,6 +54,11 @@ class jnae_driver implements Driver{
 		return 'this';
 
 	}
+	public function count(){
+		$result = $this->db->count();
+		return 'this';
+
+	}
 	public function find(){
 		$result = $this->db->find();
 		return $result;
@@ -87,6 +92,16 @@ class jnae_driver implements Driver{
 		$result = $this->db->order($order);
 		return 'this';
 
+	}
+
+	public function page( $p = 1 , $page = 10 ){
+		empty($p) ? $p = 1 : 1;
+		empty($page) ? $page = 5 : 1;
+		$limit = ($p-1)*$page.','.$page;
+
+		$this->db->limit($limit);
+
+		return 'this';
 	}
 
 

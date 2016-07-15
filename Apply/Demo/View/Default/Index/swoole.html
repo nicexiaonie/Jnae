@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>无标题文档</title>
+</head>
+<script src="/Skin/Js/jquery1.7.js" ></script>
+<body>
+
+
+
+
+</body>
+</html>
+
+{literal}
+<script>
+	var wsServer = 'ws://188.188.1.240:9502';
+	var websocket = new WebSocket(wsServer);
+	websocket.onopen = function (evt) {
+		console.log("Connected to WebSocket server.");
+		$('body').append('成功连接...<br>');
+
+		$.post('/mercha/merchant/',function(d){ //从web服务端获取注册id
+			alert(d);
+			d = $.parseJSON(d);
+			ws.send("merchantId_"+d.data.id);
+		})
+	};
+
+	websocket.onclose = function (evt) {
+		console.log("Disconnected");
+		$('body').append('断开连接...<br>');
+	};
+
+	websocket.onmessage = function (evt) {
+		console.log('Retrieved data from server: ' + evt.data);
+		$('body').append('接收数据...'+evt.data+'<br>');
+	};
+
+	websocket.onerror = function (evt, e) {
+		console.log('Error occured: ' + evt.data);
+		$('body').append('错误...'+evt.data+'<br>');
+	};
+
+	websocket.onRequest = function (evt, e) {
+
+		$('body').append('接受：'+evt.data+'<br>');
+	};
+
+
+
+
+</script>
+
+{/literal}

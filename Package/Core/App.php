@@ -82,30 +82,23 @@ class App {
 	 *
 	 */
 	public function execute(){
-		//step1、获取控制器路径
-			if(!empty($this->uri->module_name)) $path[] = ($this->uri->module_name);
+		//step1、确定控制器路径
+			if(!empty($this->uri->module_name))
+				$path[] = ($this->uri->module_name);
 			$path[] = 'Controller';
-			if(!empty($this->uri->directory_name)) $path[] = $this->uri->directory_name;
-			if(!empty($this->uri->controller_name)) $path[] = $this->uri->controller_name;
-			$controller_suffix = $this->config->item('controller_suffix');
-			if(empty($controller_suffix)) $controller_suffix = '.php';
-			$coller_path = APP_PATH.implode('/',$path).$controller_suffix;
-
-			if(!is_file($coller_path)){
-				exit('Controller file('.$coller_path.') does not exist');
-			}
-
+			if(!empty($this->uri->directory_name))
+				$path[] = $this->uri->directory_name;
+			if(!empty($this->uri->controller_name))
+				$path[] = $this->uri->controller_name;
 
 		//step2、初始化Controller  并执行
-			load($coller_path);
-			$controller_name = $this->uri->controller_name.'Controller';
+			$class = '\\'.implode('\\',$path).'Controller';
+			$Object = new $class();
+			$Object->_execute();
 
-			$controller_object = new $controller_name($this);
-			$controller_object->_execute();
-			$this->controller_object = $controller_object;
 
+		if(TRACE) Trace::finish();
 	}
-
 
 	public function __destruct (){
 		/*
@@ -114,9 +107,8 @@ class App {
 		unset($this->uri);
 		unset($this->load);
 		*/
-		if(TRACE) Trace::finish();
-	}
 
+	}
 
 	/*
 	 * 	获取对象
@@ -125,14 +117,4 @@ class App {
 		return (self::$instance);
 	}
 
-
-
-	
-	
-
 }
-
-
-
-
-

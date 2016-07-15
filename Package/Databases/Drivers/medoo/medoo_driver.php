@@ -1,6 +1,6 @@
 <?php
-
 use \Databases\Driver;
+
 class medoo_driver implements Driver{
 
 
@@ -61,8 +61,11 @@ class medoo_driver implements Driver{
 	}
 	public function limit($limit = null){
 		if(!empty($limit)){
+			if(is_string($limit))
+				$limit = explode(',',$limit);
 			$this->_limit = $limit;
 		}
+
 		return 'this';
 	}
 	public function field($field = null){
@@ -80,6 +83,14 @@ class medoo_driver implements Driver{
 		$where = $this->_self_get_where();
 
 		$result = $this->db->select($table,$fields,$where);
+		return $result;
+	}
+	public function count(){
+		empty($table) ? $table = $this->_table : $table;
+
+		$where = $this->_self_get_where();
+
+		$result = $this->db->count($table,$where);
 		return $result;
 	}
 
@@ -129,6 +140,15 @@ class medoo_driver implements Driver{
 			$error_text = $error[2];
 
 		return $error_text;
+	}
+
+	public function page( $p = 1 , $page = 10 ){
+		empty($p) ? $p = 1 : 1;
+		empty($page) ? $page = 5 : 1;
+		$limit[] = ($p-1)*$page;
+		$limit[] = $page;
+		$this->_limit = $limit;
+		return 'this';
 	}
 
 
