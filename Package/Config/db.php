@@ -1,6 +1,6 @@
 <?php
 return array(
-	'DEFAULT_DB' => 'default',
+	'default_db' => 'default',
 
 	'default'	=>	array(
 		//驱动类型

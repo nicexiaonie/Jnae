@@ -12,77 +12,41 @@
  */
 namespace View;
 
+use Core\Config;
+
 class template_driver{
-	public $file_path;	//模版文件
-
+	public $TempDir;	//模版目录
+	public $driver;
 	public function __construct(){
-
-		$this->_get_instance = get_instance();
-
-
-		$temp_suffix = C('template_suffix');
-
-		//step1、确定模版所在位置  验证文件是否存在
-			if(is_exist(C('template_path'))){
-				if(defined('MODULE_NAME')) $path[] = MODULE_NAME;
-				if(is_exist(trim(C('template_default'),'/')))
-					$path[] = trim(C('template_default'),'/');
-				if(defined('DIRECTORY_NAME')) $path[] = DIRECTORY_NAME;
-				if(defined('CONTROLLER_NAME')) $path[] = CONTROLLER_NAME;
-				if(defined('FUNCTION_NAME')) $path[] = FUNCTION_NAME;
-
-				$file_path = ROOT
-					.trim(C('template_path'),'/')
-					.'/'
-					.implode('/',$path)
-					.$temp_suffix;
-			}else{
-				if(defined('MODULE_NAME')) $path[] = MODULE_NAME;
-				$path[] = 'View';
-				if(is_exist(trim(C('template_default'),'/')))
-					$path[] = trim(C('template_default'),'/');
-				if(defined('DIRECTORY_NAME')) $path[] = DIRECTORY_NAME;
-				if(defined('CONTROLLER_NAME')) $path[] = CONTROLLER_NAME;
-				if(defined('FUNCTION_NAME')) $path[] = FUNCTION_NAME;
-
-				$file_path = APP_PATH
-					.implode('/',$path)
-					.$temp_suffix;
-			}
-
-			if(!is_file($file_path)) show_error('Template file ( '.$file_path.' ) does not exist');
-
-			$this->file_path = $file_path;
-
 		//step2、加载模版驱动
-			if(is_exist(C('template_driver')))
-				$dirver_name = (C('template_driver'));
-
-
+			if(is_exist(Config::get('template_driver')))
+				$dirver_name = Config::get('template_driver');
 			$driver_file = __DIR__.'/'.$dirver_name.'/'.$dirver_name.'_driver.php';
 			if(!is_file($driver_file))
 				show_error('Template driven file ( '.$driver_file.' ) does not exist');
-
 			load($driver_file);	//加载文件
-
 			$object_name = $dirver_name.'Driver';
-			$this->driver = new $object_name($file_path);
+			$this->driver = new $object_name();
 
+	}
+	/*
+	 * 	设置模版目录
+	 *
+	 */
+	public function setTempDir($tempDir = null){
+		$this->driver->Smarty->template_dir = $tempDir;
+		$this->TempDir = $tempDir;
 	}
 
 	public function display($value = null){
-		return $this->driver->display(($this->file_path),$value);
+		if(!is_file($this->TempDir.$value)){
+			show_error('Template('.$this->TempDir.$value.') file does not exist');
+		}
+		return $this->driver->display($value);
 	}
-
 
 	public function __call($key,$value){
 		return $this->driver->$key($value);
 	}
-
-	public function __destruct (){
-		unset($this->driver);
-
-	}
-
 
 }

@@ -3,7 +3,7 @@
 /**
  * array_depth
  *
- * 获取数据深度
+ * 获取数组深度
  *
  * @param	array
  * @return	int

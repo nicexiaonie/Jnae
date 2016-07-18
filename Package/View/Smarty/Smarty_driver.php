@@ -6,10 +6,11 @@
  *
  */
 
+use Core\Config;
 class smartyDriver {
 	public $Smarty;
 
-	public function __construct($file_path){
+	public function __construct(){
 		$smarty_file = __DIR__.'/Smarty.class.php';
 
 		$compile_dir = RUNTIME_DIR.'Compile/';	//编译目录
@@ -25,8 +26,8 @@ class smartyDriver {
 		$this->Smarty = new Smarty();
 
 		if(defined('MODULE_NAME')) $path[] = MODULE_NAME;	//模块名称
-		if(is_exist(trim(C('template_default'),'/')))
-			$path[] = trim(C('template_default'),'/');
+		if(is_exist(trim(Config::get('template_default'),'/')))
+			$path[] = trim(Config::get('template_default'),'/');
 		if(defined('DIRECTORY_NAME')) $path[] = DIRECTORY_NAME;	//目录名称
 		if(defined('CONTROLLER_NAME')) $path[] = CONTROLLER_NAME;	//控制器
 
@@ -42,32 +43,30 @@ class smartyDriver {
 
 		//初始化 Smarty 配置
 			$this->Smarty->compile_dir = $compile_dir;	//设置编译目录
-			$this->Smarty->template_dir = dirname($file_path);	//设置模版目录
 			$this->Smarty->cache_dir  = $cache_dir;	//设置缓存目录
-			$this->Smarty->caching = C('template_cache');   //开启缓存
-			$this->Smarty->cache_lifetime = C('template_cache_lifetime');  //缓存存活时间（秒）
+			$this->Smarty->caching = Config::get('template_cache');   //开启缓存
+			$this->Smarty->cache_lifetime = Config::get('template_cache_lifetime');  //缓存存活时间（秒）
 			$this->Smarty->compile_check = false;	//编译检查变量，如果开启此变量，smarty会检查模板文件是否改动过，
-			$this->Smarty->force_compile = C('force_compile');	//强制重新编译
-			$this->Smarty->left_delimiter = C('left_delimiter');
-			$this->Smarty->right_delimiter = C('right_delimiter');
-
+			$this->Smarty->force_compile = Config::get('force_compile');	//强制重新编译
+			$this->Smarty->left_delimiter = Config::get('left_delimiter');
+			$this->Smarty->right_delimiter = Config::get('right_delimiter');
 
 	}
 
 	public function __call($key,$value){
-
 		list($v1,$v2) = $value;
 		if(!method_exists($this->Smarty,$key))
-			show($key.' Methods there is no');
+			show_error($key.' Methods there is no');
 		list($v1,$v2,$v3) = $value[0];
 		$this->Smarty->$key($v1,$v2);
 	}
 
 	public function display($value){
 		if(!method_exists($this->Smarty,'display'))
-			show('display() Methods there is no');
+			show_error('display() Methods there is no');
 		$result = $this->Smarty->display($value);
 		return $result;
 	}
+
 
 }

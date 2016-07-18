@@ -1,5 +1,6 @@
 <?php
 namespace Core;
+
 class Uri {
 	public $module_name = '';	//模块
 	public $directory_name = '';	//分组
@@ -13,11 +14,11 @@ class Uri {
 	public function _initialize($app){
 
 		//step1、解析URI
-			$app -> config -> load ('uri');
+			Config::load('Uri');
 
 			$this->config = $app->config;
 
-			$protocol = $this->protocol = $this->config->item('protocol','uri');
+			$protocol = $this->protocol = Config::get('uri/protocol');
 
 			$protocol = empty($protocol) ? 'AUTO' : $protocol;
 
@@ -41,24 +42,25 @@ class Uri {
 
 		//step2、确定模块 分组  控制器 操作  并给予默认
 			//$result = (Object)array();
-			//确定模块
+			//确定模块	Config::get('uri/function_default')
+
 			(empty($this->segments)) ?
-				$this->module_name = ucfirst(strtolower($this->config->item('module_default','uri'))) :
+				$this->module_name = ucfirst(strtolower(Config::get('uri/module_default'))) :
 				$this->module_name = ucfirst(strtolower(array_shift($this->segments)));
 			//如果分组则确定 组名称
-			if($this->config->item('module_'.$this->module_name.'/is_group','uri')){
+			if(Config::get('uri/'.'module_'.strtolower($this->module_name).'/is_group')){
 				(empty($this->segments)) ?
-					$this->directory_name = ucfirst(strtolower($this->config->item('directory_name','uri'))) :
+					$this->directory_name = ucfirst(strtolower(Config::get('uri/directory_name'))) :
 					$this->directory_name = ucfirst(strtolower(array_shift($this->segments)));
 			}
 			//确定控制器
 			(empty($this->segments)) ?
-				$this->controller_name = ucfirst(strtolower($this->config->item('controller_default','uri'))) :
+				$this->controller_name = ucfirst(strtolower(Config::get('uri/controller_default'))) :
 				$this->controller_name = ucfirst(strtolower(array_shift($this->segments)));
 
 			//确定操作
 			(empty($this->segments)) ?
-				$this->function_name = (($this->config->item('function_default','uri'))) :
+				$this->function_name = Config::get('uri/function_default') :
 				$this->function_name = array_shift($this->segments);
 
 		//step3、定义常量

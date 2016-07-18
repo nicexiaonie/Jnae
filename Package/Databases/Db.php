@@ -6,6 +6,8 @@
 
 namespace Databases;
 
+use Core\Config;
+
 abstract class Db {
 
 	public $_db_driver = null;	//驱动
@@ -16,15 +18,14 @@ abstract class Db {
 	 * 加载数据库驱动
 	 */
 	public function __construct($db = null){
-		$this->_get_instance = get_instance();	//引入app
+
 		//step1、获取数据库配置
 			if(empty($db)){
-				//show('load config');
-				$default_db = $this->_get_instance->config->item('DEFAULT_DB','db');
+				$default_db = Config::get('db/default_db');
 			}else{
 				$default_db = $db;
 			}
-			$db_config = $this->_get_instance->config->item($default_db,'db');
+			$db_config = Config::get('db/'.$default_db);
 
 		if($db_config){
 			//step2、加载驱动文件

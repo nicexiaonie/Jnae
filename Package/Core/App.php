@@ -1,7 +1,7 @@
 <?php
-use \Core\Config;	//配置
-use \Core\Loaders;	//装载
-use \Core\Uri;	//装载
+use \Core\Config;
+use \Core\Loaders;
+use \Core\Uri;
 use \Core\Trace;
 
 class App {
@@ -19,24 +19,14 @@ class App {
 		error_reporting(E_ALL & ~E_NOTICE);
 
 		if(TRACE) Trace::start();
-//
-		$this->config = new Config();	//加载配置
 
-		//初始化配置类
-		if(method_exists($this->config,'_initialize'))
-			$this->config->_initialize();
+		Config::_initialize();
+		Loaders::_initialize();
 
-		$this->load = new Loaders();
-		//初始化装载类
-		if(method_exists($this->load,'_initialize'))
-			$this->load->_initialize($this);
-
-		$this->uri = new Uri();
 		//初始化URI类
+		$this->uri = new Uri();
 		if(method_exists($this->uri,'_initialize'))
 			$this->uri->_initialize($this);
-
-		autoloader::init();
 
 		$this->prepare();	//进行准备工作
 
@@ -62,11 +52,11 @@ class App {
 			$this->config->_config_paths[] = implode($config_dir,'/');
 
 		//加载配置文件
-			$this->config->load('config');
+			Config::load('config');
 
 		//step3、处理自动装载
-			if($this->config->load('autoloader',true)){
-				$autoload = $this->config->item(null,'autoloader');
+			if(Config::load('autoloader')){
+				$autoload = Config::get('autoloader');
 
 				//加载辅助函数
 				$auto_helpers = $autoload['helpers'];
@@ -97,16 +87,14 @@ class App {
 			$Object->_execute();
 
 
-		if(TRACE) Trace::finish();
+
 	}
 
 	public function __destruct (){
-		/*
-		unset($this->controller_object);
-		unset($this->config);
-		unset($this->uri);
-		unset($this->load);
-		*/
+
+		Config::destruct();	//处理配置缓存
+
+		if(TRACE) Trace::finish();
 
 	}
 

@@ -9,9 +9,7 @@ class Autoloader{
 		self::$param[]= APP_PATH;	//应用目录
 
 	}
-	public static function init(){
 
-	}
 
 	public static function add_param($path = null){
 		if($path){

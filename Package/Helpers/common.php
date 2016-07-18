@@ -14,10 +14,10 @@ function show($value = null){
  */
 function M($table = null , $db = false){
 	static $_model  = array();
-	$_get_instance = get_instance();
-	$_get_instance->config->load('db');	//加载数据库配置
+
+	\Core\Config::load('db');
 	if(empty($db)){
-		$default_db = $_get_instance->config->item('DEFAULT_DB','db');
+		$default_db = \Core\Config::get('db/default_db');
 	}else{
 		$default_db = $db;
 	}
@@ -89,21 +89,6 @@ function D($value = null , $layer = null){
 
 }
 
-function C($key = null,$value = null){
-	$_get_instance = get_instance();
-	if(is_exist($key)){
-		$key = explode(':',$key);
-
-		if(count($key) == 1) array_unshift($key,null);
-	}
-	list($value1,$value2) = $key;
-
-	if(is_exist($value)){
-
-	}else{
-		return $_get_instance->config->item($value2,strtolower($value1));
-	}
-}
 
 
 

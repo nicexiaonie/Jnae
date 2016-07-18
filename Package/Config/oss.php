@@ -10,16 +10,10 @@ return array(
 
 
 	'OSS_1'	=>	array(
-		 'accessKeyId'	=>	"WuuIsDxRw2xTcLfN",
-		 'accessKeySecret'	=>	"JSFVmbDw0WLKOga3SYUKqd0ElMGSjK",
+		 'accessKeyId'	=>	"dL4MqW5zpUdUCEpw",
+		 'accessKeySecret'	=>	"dN7jE1EEepvX1eeQ3I1h0TY1eDqZ7u",
 		 'endpoint'	=>	"aliyun.oss.xiaonie365.net",
 		 'bucket'	=>	'xiaonie365',
-	),
-	'OSS_2'	=>	array(
-		'accessKeyId'	=>	"WuuIsDxRw2xTcLfN",
-		'accessKeySecret'	=>	"JSFVmbDw0WLKOga3SYUKqd0ElMGSjK",
-		'endpoint'	=>	"xiaonie365-a.oss-cn-beijing.aliyuncs.com",
-		'bucket'	=>	'xiaonie365-a',
 	),
 
 );

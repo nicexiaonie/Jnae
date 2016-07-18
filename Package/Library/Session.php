@@ -1,7 +1,6 @@
 <?php
 namespace Library;
-
-
+use Core\Config;
 class Session
 {
     protected static $prefix = '';
@@ -30,7 +29,7 @@ class Session
     {
 
         if (empty($config)) {
-            $config = C('session');
+            $config = Config::get('session');
         }
         // 记录初始化信息
         //App::$debug && Log::record('[ SESSION ] INIT ' . var_export($config, true), 'info');

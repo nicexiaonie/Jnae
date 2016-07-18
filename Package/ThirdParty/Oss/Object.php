@@ -37,7 +37,9 @@ class Object {
 
 		try{
 			$this->Oss->uploadFile($this->bucket, $newFilePath, $oldFilePath);
+
 		} catch(OssException $e) {
+			echo 11;
 			printf(__FUNCTION__ . ": FAILED\n");
 			printf($e->getMessage() . "\n");
 			return;

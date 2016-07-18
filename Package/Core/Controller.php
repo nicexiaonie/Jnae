@@ -33,7 +33,7 @@ abstract class Controller{
 		if(method_exists($this,$after_function_name))
 			$this->$after_function_name();
 
-		if(C('view_auto')){
+		if(Config::get('view_auto')){
 			View::display();
 		}
 	}

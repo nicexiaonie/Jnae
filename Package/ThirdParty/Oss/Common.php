@@ -6,7 +6,7 @@ namespace ThirdParty\Oss;
 
 use OSS\OssClient;
 use OSS\Core\OssException;
-
+use Core\Config;
 
 Trait Common {
 	private $_get_instance;
@@ -29,10 +29,9 @@ Trait Common {
 	public function __construct(){
 		//step1、读取配置
 			if(empty(self::$config)){
-				$this->_get_instance = get_instance();
-				$this->_get_instance->config->load('oss');
+				Config::load('oss');
 			}
-			self::$config = $config = C('Oss:');
+			self::$config = $config = Config::get('Oss:');
 			$this->timeOut = $config['TIMEOUT'];
 			$this->connectTimeout = $config['CONNECTTIMEOUT'];
 			$this->config_default();
@@ -42,6 +41,7 @@ Trait Common {
 			$this->connect();
 	}
 	private function connect(){
+
 		//step1、根据配置确定code 如果实例存在 则直接返回 无需再次连接
 		static $oss_instance;
 		$config['accessKeyId']	=	$this->accessKeyId;
@@ -59,6 +59,7 @@ Trait Common {
 		} catch (OssException $e) {
 			print $e->getMessage();
 		}
+
 	}
 
 	private function config_default(){

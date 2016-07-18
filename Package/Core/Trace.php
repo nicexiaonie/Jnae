@@ -32,7 +32,6 @@ class Trace{
 			self::$trace_info[$key][] = $value;
 		}
 
-		//show();
 	}
 	static function start(){
 
