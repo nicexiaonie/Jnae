@@ -50,7 +50,7 @@ class Uri {
 			//如果分组则确定 组名称
 			if(Config::get('uri/'.'module_'.strtolower($this->module_name).'/is_group')){
 				(empty($this->segments)) ?
-					$this->directory_name = ucfirst(strtolower(Config::get('uri/directory_name'))) :
+					$this->directory_name = ucfirst(strtolower(Config::get('uri/directory_default'))) :
 					$this->directory_name = ucfirst(strtolower(array_shift($this->segments)));
 			}
 			//确定控制器

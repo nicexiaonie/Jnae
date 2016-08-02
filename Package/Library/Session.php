@@ -23,7 +23,6 @@ class Session
      * session初始化
      * @param array $config
      * @return void
-     * @throws \think\Exception
      */
     public static function init(array $config = [])
     {

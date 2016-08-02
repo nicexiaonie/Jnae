@@ -35,6 +35,7 @@ class App {
 		//开始执行
 		$this->execute();
 
+
 	}
 
 	/*
@@ -83,6 +84,10 @@ class App {
 
 		//step2、初始化Controller  并执行
 			$class = '\\'.implode('\\',$path).'Controller';
+
+			if(!class_exists($class)){
+				show_error('Controller('.$class.') does not exist');
+			}
 			$Object = new $class();
 			$Object->_execute();
 

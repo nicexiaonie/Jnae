@@ -1,6 +1,9 @@
 <?php
 
 namespace Library;
+
+use \Core\Config;
+
 class Security {
 
 	/**
@@ -124,20 +127,20 @@ class Security {
 	public function __construct()
 	{
 		// Is CSRF protection enabled?
-		if (C('csrf_protection'))
+		if (Config::get('csrf_protection'))
 		{
 
 			// CSRF config
 			foreach (array('csrf_expire', 'csrf_token_name', 'csrf_cookie_name') as $key)
 			{
-				if (NULL !== ($val = C($key)))
+				if (NULL !== ($val = Config::get($key)))
 				{
 					$this->{'_'.$key} = $val;
 				}
 			}
 
 			// Append application specific cookie prefix
-			if ($cookie_prefix = C('cookie_prefix'))
+			if ($cookie_prefix = Config::get('cookie_prefix'))
 			{
 				$this->_csrf_cookie_name = $cookie_prefix.$this->_csrf_cookie_name;
 			}
@@ -148,7 +151,7 @@ class Security {
 			$this->_csrf_set_hash();
 		}
 
-		$this->charset = strtoupper(C('charset'));
+		$this->charset = strtoupper(Config::get('charset'));
 
 
 	}
@@ -170,7 +173,7 @@ class Security {
 		}
 
 		// 数组的uri忽略CSRF检查
-		if ($exclude_uris = C('csrf_exclude_uris'))
+		if ($exclude_uris = Config::get('csrf_exclude_uris'))
 		{
 
 			foreach ($exclude_uris as $excluded)
@@ -196,7 +199,7 @@ class Security {
 		unset($_POST[$this->_csrf_token_name]);
 
 		// Regenerate on every submission?
-		if (C('csrf_regenerate'))
+		if (Config::get('csrf_regenerate'))
 		{
 			// Nothing should last forever
 			unset($_COOKIE[$this->_csrf_cookie_name]);
@@ -221,7 +224,7 @@ class Security {
 	public function csrf_set_cookie()
 	{
 		$expire = time() + $this->_csrf_expire;
-		$secure_cookie = (bool) C('cookie_secure');
+		$secure_cookie = (bool) Config::get('cookie_secure');
 
 		if ($secure_cookie && !is_https())
 		{
@@ -232,10 +235,10 @@ class Security {
 			$this->_csrf_cookie_name,
 			$this->_csrf_hash,
 			$expire,
-			C('cookie_path'),
-			C('cookie_domain'),
+			Config::get('cookie_path'),
+			Config::get('cookie_domain'),
 			$secure_cookie,
-			C('cookie_httponly')
+			Config::get('cookie_httponly')
 		);
 		//log_message('info', 'CSRF cookie sent');
 

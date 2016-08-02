@@ -115,19 +115,18 @@ class Validate{
 	 * 数据自动验证
 	 * @access public
 	 * @param array     $data  数据
-	 * @param mixed     $rules  验证规则
+	 * @param array     $rules  验证规则
 	 * @param string    $scene 验证场景
 	 * @return bool
 	 */
 	public function check($data,$rules=array(),$scene = 0){
 		//读取规则
+
 		if(empty($rules)) $rules = $this->rules;
 
 		foreach($rules as $key => $item){
 			//分析规则
-
 			$item = $this->getRule($item,$scene);
-
 			if(!$item) continue;
 
 			//场景监测
@@ -151,7 +150,7 @@ class Validate{
 	/*
 	 * 	获取字段值
 	 */
-	public function getDataValue($data,$field){
+	private function getDataValue($data,$field){
 		if(is_array($data)){
 			if(isset($data[$field])){
 				return $data[$field];
@@ -160,7 +159,7 @@ class Validate{
 		return null;
 	}
 
-	public function checkItem($value,$rule){
+	private function checkItem($value,$rule){
 		$is_check = false;
 
 		//step1、验证条件过滤
@@ -197,7 +196,7 @@ class Validate{
 		return $this->message;
 	}
 
-	public function is($value,$rule){
+	private function is($value,$rule){
 		$result = true;
 		switch ($rule) {
 			case 'require':

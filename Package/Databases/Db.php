@@ -28,6 +28,7 @@ abstract class Db {
 			$db_config = Config::get('db/'.$default_db);
 
 		if($db_config){
+
 			//step2、加载驱动文件
 				$drivers_file = __DIR__.'/Drivers/'.$db_config['driver'].'/'.$db_config['driver'].'_driver.php';
 				if(is_file($drivers_file)){

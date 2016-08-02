@@ -31,13 +31,13 @@ class medoo_driver implements Driver{
 		$config['charset'] = $db_config['char_set'];
 		$config['port'] = $db_config['port'];
 		$config['prefix'] = $db_config['prefix'];
-		//try{
+		try{
 			$medoo = new medoo($config);
 			$this->db = $medoo;
 			return $this;
-		//}catch(Exception $e){
-		//	show_error('Message: ' .$e->getMessage());
-		//}
+		}catch(Exception $e){
+			show_error('Message: ' .$e->getMessage());
+		}
 	}
 
 	public function _set_table($table){

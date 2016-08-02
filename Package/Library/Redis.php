@@ -2,6 +2,8 @@
 
 namespace Library;
 
+use Core\Config;
+
 class Redis{
 	protected static $handler = null;
 
@@ -21,12 +23,13 @@ class Redis{
 	 *
 	 */
 	public static function Instance($Sign = null){
+
 		//step1、读取配置，根据配置生成Sign
 			if( empty(self::$config) ){
-				if(empty(self::$config_bak))
-					$instance = get_instance();
-					$instance->config->load('redis');
-					self::$config_bak = C('redis:');
+				if(empty(self::$config_bak)){
+					Config::load('redis');
+					self::$config_bak = Config::get('redis/');
+				}
 				empty($Sign) ?
 					$key = self::$config_bak['DEFAULT_DB'] :
 					$key = $Sign;
@@ -44,7 +47,6 @@ class Redis{
 			$func = $config['persistent'] ? 'pconnect' : 'connect';
 			$result = $redis->$func($config['host'], $config['port'], $config['timeout']);
 			if(!$result){
-				ob_clean();
 				show_error('Redis connection fails<br>');
 			}
 			if ('' != $config['password'])

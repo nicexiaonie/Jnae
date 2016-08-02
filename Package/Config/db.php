@@ -4,12 +4,14 @@ return array(
 
 	'default'	=>	array(
 		//驱动类型
-		'driver'    =>   'jnae',
+		'driver'    =>   'medoo',
 
 		//数据库类型。如：mysql、postgres、odbc 等。必须为小写字母
 		'dbdriver' => 'mysql',
 
 		//数据库的主机名，通常位于本机，可以表示为 localhost
+		//'hostname' => '123.57.63.26',
+		//'hostname' => 'ali.server.xiaonie365.net',
 		'hostname' => 'localhost',
 
 		//你需要连接的数据库名
@@ -20,6 +22,7 @@ return array(
 
 		//登陆数据库的密码.
 		'password' => 'cc1925612f',
+		//'password' => 'RZznZEWd',
 
 		//表前缀
 		'prefix'  =>   'phome_',

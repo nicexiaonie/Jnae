@@ -1,6 +1,7 @@
 <?php
 return array(
 
+
 	//自动渲染
 	'view_auto' => false,
 	//加载文件的后缀  此处
@@ -12,6 +13,7 @@ return array(
 
 	//模版驱动
 	'template_driver' => 'Smarty',
+	//'template_driver' => 'Twig',
 	//模版主题  默认无
 	'template_default' => 'Default',
 	//魔版路径 默认在当前模块下
@@ -26,6 +28,13 @@ return array(
 	'force_compile' => true,
 	'left_delimiter' => '{',
 	'right_delimiter' => '}',
+	/*
+	 * 模版文件名大小写  默认由URL决定
+	 * 	ucwords	首字母大写
+	 * 	strtolower	全部小写
+	 *
+	 */
+	'template_unlimit'	=>	'strtolower',
 
 
 	'VAR_AUTO_STRING' =>	true,	//自动强制转字符串
@@ -116,6 +125,14 @@ return array(
 	 */
 	'VAR_PAGE'	=>	'p',	//分页参数名称
 
+
+	/*
+	 * 	缓存相关配置
+	 */
+	'cache'	=>	array(
+		'cache_dir'	=>	'Data/',	//相对于RUNTIME目录
+		'type'	=>	'File',		//默认缓存类型：File Redis
+	),
 
 
 

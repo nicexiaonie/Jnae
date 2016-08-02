@@ -37,9 +37,7 @@ class Autoloader{
 		$dir_list = self::$param;
 		foreach($dir_list as $k=>$v){
 			$file = rtrim($v,'/').'/'.$classPath.self::$suffix;
-			//show($file);
 			if(is_file($file)){
-				//show($file);
 				return load($file);
 			}
 		}

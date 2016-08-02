@@ -1,5 +1,7 @@
 <?php
-
+function smarty_url($param){
+	show($param);
+}
 /*
  * 	此文件在app对象前已经装载
  *
@@ -8,6 +10,25 @@ function show($value = null){
 	echo '<pre>';
 	var_dump($value);
 	echo '</pre>';
+}
+
+
+function R($value,$param=array()){
+	$parameter[0] = $value;
+	$parameter[1] = $param;
+
+	//step1、确定控制器路径
+		$value = explode('/',$value);
+		$action = array_pop($value);
+		$moduleName = array_shift($value);
+		array_unshift($value,'Controller');
+		array_unshift($value,$moduleName);
+
+	//step2、初始化Controller  并执行
+		$class = '\\'.implode('\\',$value).'Controller';
+		$Object = new $class();
+
+	return $Object->_execute($action,$parameter);
 }
 /*
  * 	实例化数据库 获取数据模型
@@ -203,7 +224,7 @@ function I($name,$default='',$filter=null,$datas=null) {
 	static $_PUT	=	null;
 	if(strpos($name,'/')){ // 指定修饰符
 		list($name,$type) 	=	explode('/',$name,2);
-	}elseif(C('VAR_AUTO_STRING')){ // 默认强制转换为字符串
+	}elseif(\Core\Config::get('VAR_AUTO_STRING')){ // 默认强制转换为字符串
 		$type   =   's';
 	}
 	if(strpos($name,'.')) { // 指定参数来源
@@ -264,7 +285,7 @@ function I($name,$default='',$filter=null,$datas=null) {
 	}
 	if(''==$name) { // 获取全部变量
 		$data       =   $input;
-		$filters    =   isset($filter)?$filter:C('DEFAULT_FILTER');
+		$filters    =   isset($filter)?$filter:\Core\Config::get('DEFAULT_FILTER');
 		if($filters) {
 			if(is_string($filters)){
 				$filters    =   explode(',',$filters);
@@ -341,7 +362,7 @@ function array_map_recursive($filter, $data) {
 }
 
 function app_filter(&$value){
-	// TODO 其他安全过滤
+
 
 	// 过滤查询特殊字符
 	if(preg_match('/^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$/i',$value)){
@@ -349,111 +370,6 @@ function app_filter(&$value){
 	}
 }
 
-
-/*
-     * @name:       输出
-     * @parameter： all
-     * @array(验证字段,验证规则,错误提示,[验证条件,附加规则,验证时间]);
-     *          验证规则：
-     *              require 字段必须（不能为空）
-     * 				function	函数验证
-     *
-     * unique
-     *          验证条件：
-     *              0：存在则验证     默认
-     *              1：必须验证
-     *              2：值不为空时验证
-     *          附加规则：
-     *              confirm：验证表单中的两个字段是否相同，定义的验证规则是一个字段名
-     *              in：验证是否在某个范围内，定义的验证规则必须是一个数组
-     * 				either:	必须存在一个  验证规则：array || string
- 	 *
-     *              length：验证长度，定义的验证规则可以是一个数字（表示固定长度）或者数字范围（例如3,12 表示长度从3到12的范围）
-     *              between：验证范围，定义的验证规则表示范围，可以使用字符串或者数组，例如1,31或者array(1,31)
-     *          验证时间：
-     *              1：新增数据时验证
-     *              2：编辑数据时验证
-     *              3：全部情况下验证   默认
-     * @type:   string
-     *          操作类型
-     *              add：插入
-     *              save:更新
-     *
-     * @Author:     nieyuanpei
-     * @date:       2016-3-21
-    */
-function _verification($data,$verification,$type = 'add')
-{
-	foreach($verification as $k=>$v){
-		$v = array_pad($v, 4, 0);   //0：存在则验证     默认
-		$v = array_pad($v, 5, null);
-		$v = array_pad($v, 6, 3);   //3：全部情况下验证   默认
-
-		//根据验证条件过滤
-		if($v[3] == 0){
-			//存在则验证  ：不存在则跳出验证
-			if(!isset($data[$v[0]])){
-				continue;
-			}
-		}else if($v[3] == 1){
-			//必须验证
-		}else if($v[3] == 2){
-			//值不为空验证   则值为空则跳出验证
-			if(empty($data[$v[0]])) continue;
-		}
-
-		//根据验证时间过滤
-		if($v[5] != 3){
-			if($v[5] == 1 && $type != 'add'){
-				continue;
-			}
-			if($v[5] == 2 && $type != 'save'){
-				continue;
-			}
-		}
-
-		//是否需要字段必须验证
-		if($v[1] == 'require'){
-			if(empty($data[$v[0]])) return $v[2];
-		}
-
-		switch($v[4]){
-			//验证表单中的两个字段是否相同，定义的验证规则是一个字段名
-			case 'confirm':
-				if(!isset($data[$v[1]])) $data[$v[1]]=null;
-				if($data[$v[0]] != $data[$v[1]]){
-					return $v[2];
-				}
-				break;
-			case 'in':
-				//验证是否在某个范围内，定义的验证规则必须是一个数组
-				if(!in_array($data[$v[0]],$v[1])){
-					return $v[2];
-				}
-				break;
-			case 'either':
-				//必须存在一个  验证规则：array || string
-				$check_data_tmp = array();
-				if(!empty($data[$v[0]])) $check_data_tmp[] = $data[$v[0]];
-				if(is_array($v[1])){
-					foreach($v[1] as $key_tmp => $value_tmp){
-						if(!empty($data[$value_tmp])) $check_data_tmp[] = $data[$value_tmp];
-					}
-				}else{
-					if(!empty($data[$v[1]])) $check_data_tmp[] = $data[$v[1]];
-				}
-				if(!count($check_data_tmp) > 0) return $v[2];
-				break;
-			case 'function':
-
-				break;
-			default:
-				break;
-
-		}
-	}
-	return 'success';
-}
 
 
     /*
@@ -483,16 +399,17 @@ function _filtration($data,$filtration)
  *
  */
 function U($value = null,$param = array()){
-	C('URI:IS_BASE_URL') ? $result = base_url() : $result = '';
+
+	\Core\Config::get('uri/IS_BASE_URL') ? $result = base_url() : $result = '';
 
 	if(defined('MODULE_NAME'))
-		$path[C('URI:module_trigger')] = MODULE_NAME;
-	if(defined('DIRECTORY_NAME') && C('URI:module_'.MODULE_NAME.'/is_group'))
-		$path[C('URI:directory_trigger')] = DIRECTORY_NAME;
+		$path[\Core\Config::get('uri/module_trigger')] = MODULE_NAME;
+	if(defined('DIRECTORY_NAME') && \Core\Config::get('uri/module_'.strtolower(MODULE_NAME).'/is_group'))
+		$path[\Core\Config::get('uri/directory_trigger')] = DIRECTORY_NAME;
 	if(defined('CONTROLLER_NAME'))
-		$path[C('URI:controller_trigger')] = CONTROLLER_NAME;
+		$path[\Core\Config::get('uri/controller_trigger')] = CONTROLLER_NAME;
 	if(defined('FUNCTION_NAME'))
-		$path[C('URI:function_trigger')] = FUNCTION_NAME;
+		$path[\Core\Config::get('uri/function_trigger')] = FUNCTION_NAME;
 
 	if(!empty($value)) $value = explode('/',$value);
 
@@ -500,9 +417,9 @@ function U($value = null,$param = array()){
 		if(!empty($value)) $path[$k] = array_pop($value);
 	}
 
-	switch(C('uri:protocol')){
+	switch(\Core\Config::get('uri/protocol')){
 		case 'PATH_INFO':
-			$result .= '/' . implode('/',$path) . C('URI:URL_SUFFIX'); unset($path);
+			$result .= '/' . implode('/',$path) . \Core\Config::get('uri/URL_SUFFIX'); unset($path);
 			break;
 		case 'QUERY_STRING':
 			$result .= '/' . trim($_SERVER['SCRIPT_NAME'],'/');

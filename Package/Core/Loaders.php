@@ -5,8 +5,8 @@ class Loaders{
 	public static $is_helper = array();	//已加载的函数文件
 
 	public static function _initialize(){
-		Self::helper('/file');	//加载文件操作函数
-		Self::helper('/versions');	//php内置函数版本兼容库
+		self::helper('/file');	//加载文件操作函数
+		self::helper('/versions');	//php内置函数版本兼容库
 	}
 
 	public static function load($className = false , $Object = true){
@@ -20,6 +20,9 @@ class Loaders{
 	 *
 	 */
 	public static function helper($className = false){
+		$uucode = md5($className);
+		if(!empty(self::$is_helper[$uucode])) return true;
+
 		if($className == '/common') return false;
 		if(!$className) return false;
 		$className = explode('/',$className);
@@ -39,6 +42,7 @@ class Loaders{
 			return false;
 		}
 		load($file_path);
+		self::$is_helper[$uucode] = true;
 		return true;
 	}
 

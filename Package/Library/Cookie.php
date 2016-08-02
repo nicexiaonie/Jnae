@@ -3,6 +3,7 @@
 
 namespace Library;
 
+use Core\Config;
 class Cookie
 {
     protected static $config = [
@@ -31,14 +32,15 @@ class Cookie
     {
         if (empty($config)) {
             //$config = C('cookie');
-			$config['prefix']	= C('cookie_prefix');
-			$config['secure']	= C('cookie_secure');
-			$config['httponly']	= C('cookie_httponly');
-			$config['domain']	= C('cookie_domain');
-			$config['path']	= C('cookie_path');
-			$config['expire']	= C('cookie_expire');
+			$config['prefix']	= Config::get('cookie_prefix');
+			$config['secure']	= Config::get('cookie_secure');
+			$config['httponly']	= Config::get('cookie_httponly');
+			$config['domain']	= Config::get('cookie_domain');
+			$config['path']	= Config::get('cookie_path');
+			$config['expire']	= Config::get('cookie_expire');
 
         }
+		show($config);
         self::$config = array_merge(self::$config, array_change_key_case($config));
         if (!empty(self::$config['httponly'])) {
             ini_set('session.cookie_httponly', 1);
@@ -70,6 +72,7 @@ class Cookie
      */
     public static function set($name, $value = '', $option = null)
     {
+		self::init();
         // 参数设置(会覆盖黙认设置)
         if (!is_null($option)) {
             if (is_numeric($option)) {

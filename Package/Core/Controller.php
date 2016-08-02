@@ -3,6 +3,7 @@ namespace Core;
 
 use View\View;
 
+
 abstract class Controller{
 
 
@@ -10,15 +11,15 @@ abstract class Controller{
 
 	public function __construct(){
 		$this->_get_instance = get_instance();
-
 	}
 
 	//执行
-	public function _execute(){
+	public function _execute($function_name = null,$param = null){
 
 		if(method_exists($this,'_initialize'))
 			$this->_initialize();
-		$function_name = $this->uri->function_name;
+
+		if(empty($function_name)) $function_name = $this->uri->function_name;
 
 		if(!method_exists($this,$function_name))
 			show_error('This function/action('.$function_name.') does not exist');
@@ -27,7 +28,7 @@ abstract class Controller{
 		if(method_exists($this,$before_function_name))
 			$this->$before_function_name();
 
-		$content = $this->$function_name();
+		$content = $this->$function_name($param);
 
 		$after_function_name = '_after_'.$function_name;
 		if(method_exists($this,$after_function_name))
@@ -36,6 +37,8 @@ abstract class Controller{
 		if(Config::get('view_auto')){
 			View::display();
 		}
+
+		return $content;
 	}
 
 	/*

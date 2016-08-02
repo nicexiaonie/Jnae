@@ -1,10 +1,7 @@
 <?php
 
 /**
- * array_depth
- *
- * 获取数组深度
- *
+ * array_depth	获取数组深度
  * @param	array
  * @return	int
  */
@@ -14,7 +11,6 @@ function array_depth($array) {
 	foreach ($array as $value) {
 		if (is_array($value)) {
 			$depth = array_depth($value) + 1;
-
 			if ($depth > $max_depth) {
 				$max_depth = $depth;
 			}
@@ -23,67 +19,120 @@ function array_depth($array) {
 	return $max_depth;
 }
 
-
-if ( ! function_exists('element'))
-{
-	/**
-	 * Element
-	 *
-	 * 检查指定的key是否存在于数组中  默认null
-	 *
-	 * @param	string
-	 * @param	array
-	 * @param	mixed
-	 * @return	mixed	depends on what the array contains
-	 */
-	function element($item, array $array, $default = NULL)
-	{
-		return array_key_exists($item, $array) ? $array[$item] : $default;
-	}
-}
-
-// ------------------------------------------------------------------------
-
-if ( ! function_exists('random_element'))
-{
-	/**
-	 * 随机返回一个键   如果值为字符串则直接返回
-	 *
-	 * @param	array
-	 * @return	mixed	depends on what the array contains
-	 */
-	function random_element($array)
-	{
-		return is_array($array) ? $array[array_rand($array)] : $array;
-	}
-}
-
-if ( ! function_exists('elements'))
-{
-	/**
-	 * Elements
-	 *
-	 * 从一个数组中获取一个或者多个值
-	 *
-	 * @param	array
-	 * @param	array
-	 * @param	mixed
-	 * @return	mixed	depends on what the array contains
-	 */
-	function elements($items, array $array, $default = NULL)
-	{
-		$return = array();
-
-		is_array($items) OR $items = array($items);
-
-		foreach ($items as $item)
-		{
-			$return[$item] = array_key_exists($item, $array) ? $array[$item] : $default;
+/**
+ * 	array_urldecode
+ *	解码数组
+ */
+function array_urldecode(&$array){
+	if(is_array($array)){
+		foreach($array as $k=>$item){
+			$array[$k] = array_urldecode($item);
 		}
+	}else{
+		$array = urldecode($array);
+	}
+	return $array;
+}
 
-		return $return;
+/**
+ * 	改变数组值
+ *	该函数返回数组。
+ * 	该数组是将 subject 中全部的 search 都被 change 替换之后的结果。
+ */
+function array_change($search, $change,  $subject ){
+	foreach($subject as $k=>$v){
+		if(is_array($v)){
+			$subject[$k] = array_change($search,$change,$v);
+		}else{
+			if($v === $search) $subject[$k] = $change;
+		}
+	}
+	return $subject;
+}
+
+/**
+ * array_intval	数组转int
+ * @param	array
+ * @return	int
+ */
+function array_intval(&$value){
+	if(is_array($value)){
+		$result = array();
+		foreach($value as $k => $v){
+			$result[$k] = intval($v);
+		}
+		return $result;
+	}else{
+		return intval($value);
 	}
 }
+
+/**
+ * array_strval	数组转string
+ * @param	array
+ * @return	string
+ */
+function array_strval(&$value){
+	if(is_array($value)){
+		$result = array();
+		foreach($value as $k => $v){
+			$result[$k] = strval($v);
+		}
+		return $result;
+	}else{
+		return strval($value);
+	}
+}
+
+/**
+ * Element
+ *
+ * 检查指定的key是否存在于数组中  默认null
+ *	存在则返回值，不存在则默认返回$default
+ * @param	string
+ * @param	array
+ * @param	mixed
+ * @return	mixed	depends on what the array contains
+ */
+function element($item, array $array, $default = NULL)
+{
+		return array_key_exists($item, $array) ? $array[$item] : $default;
+}
+
+/**
+ * 随机返回一个键   如果值为字符串则直接返回
+ *
+ * @param	array
+ * @return	mixed	depends on what the array contains
+ */
+function random_element($array)
+{
+	return is_array($array) ? $array[array_rand($array)] : $array;
+}
+
+
+
+/**
+ * Elements
+ *
+ * 从一个数组中获取一个或者多个值
+ *
+ * @param	array
+ * @param	array
+ * @param	mixed
+ * @return	mixed	depends on what the array contains
+ */
+function elements($items, array $array, $default = NULL)
+{
+	$return = array();
+	is_array($items) OR $items = array($items);
+	foreach ($items as $item)
+	{
+		$return[$item] = array_key_exists($item, $array) ? $array[$item] : $default;
+	}
+	return $return;
+}
+
 
 if ( ! function_exists('array_change_key_cases'))
 {

@@ -26,11 +26,11 @@ return array(
 
 
 
-	'module_index'	=>	array(
-		'is_group'	=>	true,
+	'module_test'	=>	array(
+		'is_group'	=>	false,
 	),
 	'module_demo'	=>	array(
-		'is_group'	=>	false,
+		'is_group'	=>	true,
 	),
 
 );
