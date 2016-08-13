@@ -46,6 +46,7 @@ class Redis{
 			$redis = new \Redis;
 			$func = $config['persistent'] ? 'pconnect' : 'connect';
 			$result = $redis->$func($config['host'], $config['port'], $config['timeout']);
+
 			if(!$result){
 				show_error('Redis connection fails<br>');
 			}

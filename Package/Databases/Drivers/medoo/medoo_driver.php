@@ -10,6 +10,8 @@ class medoo_driver implements Driver{
 	private $_limit = '';
 	private $_order = '';
 
+	private $_error = '';
+
 
 	public function __construct($db_config){
 
@@ -110,6 +112,20 @@ class medoo_driver implements Driver{
 		$result = $this->db->insert($table,$data);
 		return $result;
 	}
+	public function save($data,$where=null){
+		empty($table) ? $table = $this->_table : $table;
+
+		empty($where) ? $where = $this->_where : $where;
+
+		if(empty($where)) {
+			$this->_error = 'Update operation, the where can\'t be empty!';
+			return false;
+		}
+
+		$result = $this->db->update($table,$data,$where);
+		return $result;
+	}
+
 	public function delete(){
 		$table = $this->_table;
 		if(empty($this->_where)) return false;	//防止删除全部
@@ -134,6 +150,8 @@ class medoo_driver implements Driver{
 	}
 
 	public function error(){
+		if(!empty($this->_error)) return $this->_error;
+
 		$error = $this->db->error();
 
 		if(!empty($error[2]))

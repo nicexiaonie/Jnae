@@ -49,11 +49,6 @@ abstract class Db {
 		}
 	}
 
-
-
-
-
-
 }
 
 ?>

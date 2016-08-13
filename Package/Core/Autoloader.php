@@ -10,7 +10,6 @@ class Autoloader{
 
 	}
 
-
 	public static function add_param($path = null){
 		if($path){
 			if(is_dir($path))

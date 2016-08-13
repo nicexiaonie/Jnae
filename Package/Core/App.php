@@ -18,6 +18,8 @@ class App {
 		ini_set('display_errors', true);
 		error_reporting(E_ALL & ~E_NOTICE);
 
+
+
 		if(TRACE) Trace::start();
 
 		Config::_initialize();
@@ -31,6 +33,8 @@ class App {
 		$this->prepare();	//进行准备工作
 
 		self::$instance =& $this;
+
+		define('IS_AJAX',(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ? true : false);
 
 		//开始执行
 		$this->execute();
@@ -56,16 +60,14 @@ class App {
 			Config::load('config');
 
 		//step3、处理自动装载
-			if(Config::load('autoloader')){
-				$autoload = Config::get('autoloader');
+			Config::load('autoloader');
+			$auto_helpers = Config::get('autoloader/helpers');
+			//加载辅助函数
+			if(count($auto_helpers) > 0)
+				array_walk($auto_helpers,function($v,$key){
+					Loaders::helper($v);
+				});
 
-				//加载辅助函数
-				$auto_helpers = $autoload['helpers'];
-				if(count($auto_helpers) > 0)
-					array_walk($auto_helpers,function($v,$key){
-						$this->load->helper($v);
-					});
-			}
 	}
 	/*
 	 *
@@ -92,14 +94,14 @@ class App {
 			$Object->_execute();
 
 
-
+		if(TRACE) Trace::finish();
 	}
 
 	public function __destruct (){
 
 		Config::destruct();	//处理配置缓存
 
-		if(TRACE) Trace::finish();
+
 
 	}
 

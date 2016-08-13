@@ -2,15 +2,23 @@
 
 namespace Core;
 use \Databases\Db;
+use \Library\Input;
+use \Library\Validate;
+
 
 class Model extends Db{
-	public function __construct($db = null){
 
+	private $error = '';
+
+	public function __construct($db = null){
+		Config::load('db');
 		parent::__construct($db);
+		if(method_exists($this,'_initialize'))
+			$this->_initialize();
 
 	}
 
-	/*
+	/**
 	 * 	成员变量不存在调用此方法：
 	 * 		调用APP对象
 	 */
@@ -18,13 +26,11 @@ class Model extends Db{
 		return ($this->_get_instance->$name);
 	}
 
-	/*
+	/**
 	 *	当方法不存在是调用：
 	 * 		默认调用对应驱动扩展方法
 	 * 		调用对应驱动方法
 	 * 		调用控制器方法
-	 *
-	 *
 	 */
 	public function __call($key,$value){
 
@@ -68,7 +74,99 @@ class Model extends Db{
 		return $result;
 	}
 
+	/**
+	 * 获取表名 （小写）
+	 * 	根据实例化的模型得到数据表名称
+	 */
+	private function _getClassName(){
+		$className = get_class($this);
+		$className = explode('\\',$className);
+		$name = array_pop($className);
+		$name = preg_replace('/Model$/','',$name);
+		if(!empty($name)) $this->_db_driver->_set_table(strtolower($name));
+	}
 
+	/**
+	 * 数据创建
+	 * 	自动对数据进行过滤和验证
+	 */
+	public function create($data = null,$scene = 0){
+		Loaders::helper('/array');
+
+		$depth = array_depth($data);
+		if($depth > 1){
+			foreach($data as $k=>$v){
+				$data[$k] = $this->create($v,$scene);
+				if($data[$k] == false) return false;
+			}
+			return $data;
+		}
+
+		if(empty($data)) $data = Input::post();
+		//过滤字段
+		if(!empty($this->_fields) || is_array($this->_fields)){
+			foreach($data as $k=>&$v){
+				if(!in_array($k,$this->_fields)){
+					unset($data[$k]);
+				}
+			}
+		}
+
+		//数据合法验证
+		if(!empty($this->_validate) || is_array($this->_validate)){
+			//获取验证实例
+			$validata = Validate::make($this->_validate);
+			if($validata->check($data,null,$scene) !== true){
+				$this->error = $validata -> error();
+				return false;
+			}
+		}
+
+		return $data;
+ 	}
+
+	/**
+	 * 添加数据
+	 *  重写驱动add方法，增加对数据进行过滤验证操作
+	 *
+	 */
+	public function add($data = null){
+		if(empty($this->_db_driver)) show_error('This method(add) does not exist!');
+		$this->_getClassName();
+		$data = $this->create($data,1);	//数据验证
+		if($data == false) return false;
+		$result = $this->_db_driver->add($data);
+		if(!$result ||( is_array($result) && empty(array_filter($result)))){
+			$this->error = $this->_db_driver->error();
+			return false;
+		}
+		return $result;
+	}
+
+	/**
+	 * 更新数据
+	 *  重写驱动save方法，增加对数据进行过滤验证操作
+	 *
+	 */
+	public function save($data = null){
+		if(empty($this->_db_driver)) show_error('This method(add) does not exist!');
+		$this->_getClassName();
+		$data = $this->create($data,2);
+		if($data == false) return false;
+		$result = $this->_db_driver->save($data);
+		if(!$result){
+			$this->error = $this->_db_driver->error();
+			return false;
+		}
+		return $result;
+	}
+
+	/**
+	 * 	获取错误
+	 */
+	public function getError(){
+		return $this->error;
+	}
 
 
 }

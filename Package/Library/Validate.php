@@ -35,8 +35,8 @@
  *              in：验证是否在某个范围内，定义的验证规则必须是一个数组
  * 		[验证时间]
  * 			1 新增数据时候验证
-				2 编辑数据时候验证
-				0 全部情况下验证（默认）
+			2 编辑数据时候验证
+			0 全部情况下验证（默认,如果规则没此项则自动补0）
  * 	);
  *
  */
@@ -121,16 +121,12 @@ class Validate{
 	 */
 	public function check($data,$rules=array(),$scene = 0){
 		//读取规则
-
 		if(empty($rules)) $rules = $this->rules;
 
 		foreach($rules as $key => $item){
-			//分析规则
+			//分析规则 并验证场景
 			$item = $this->getRule($item,$scene);
 			if(!$item) continue;
-
-			//场景监测
-			if($scene !== $item[5]) continue;
 
 			// 获取数据 支持二维数组
 			$value = $this->getDataValue($data, $item[0]);
@@ -407,8 +403,7 @@ class Validate{
 				implode(',',$rule[1]),
 			$this->message);
 
-
-		if($scene !== $rule[5]) return false;
+		if($scene !== $rule[5] && $rule[5] !== 0) return false;
 
 		return $rule;
 	}

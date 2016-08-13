@@ -1,7 +1,5 @@
 <?php
-function smarty_url($param){
-	show($param);
-}
+
 /*
  * 	此文件在app对象前已经装载
  *
@@ -66,15 +64,15 @@ function M($table = null , $db = false){
  *
  *
  * 	param1	模型名称
- *		user	当前模型下的[userModel.php]文件
- *		user/login	当前模型下的[user/loginModel.php]文件
- * 		demo:user	demo模型下 [userModel.php] 文件
- * 		demo:user/login	demo模型下 [user/loginModel.php] 文件
+ *		user	当前模块下的[userModel.php]文件
+ *		user/login	当前模块下的[user/loginModel.php]文件
+ * 		demo:user	demo模块下 [userModel.php] 文件
+ * 		demo:user/login	demo模块下 [user/loginModel.php] 文件
  * 	param2	模型分层[userModel.php]
-		user Logic	当前模型下的[userLogic.php]文件
- *		user/login Logic	当前模型下的[user/loginLogic.php]文件
- * 		demo:user Logic	demo模型下 [loginLogic.php] 文件
- * 		demo:user/login Logic	demo模型下 [user/loginLogic.php] 文件
+		user Logic	当前模块下的[userLogic.php]文件
+ *		user/login Logic	当前模块下的[user/loginLogic.php]文件
+ * 		demo:user Logic	demo模块下 [loginLogic.php] 文件
+ * 		demo:user/login Logic	demo模块下 [user/loginLogic.php] 文件
  *
  *
  */
@@ -454,7 +452,7 @@ function self_url($param = null){
 	if(defined('FUNCTION_NAME'))
 		$path[C('URI:function_trigger')] = FUNCTION_NAME;
 
-show();
+
 	switch(C('URI:protocol')){
 		case 'PATH_INFO':
 			$result .= '/' . implode('/',$path) . C('URI:URL_SUFFIX'); unset($path);
@@ -489,7 +487,6 @@ function base_url(){
 }
 
 
-
 if ( ! function_exists('is_https'))
 {
 	/**
@@ -517,6 +514,54 @@ if ( ! function_exists('is_https'))
 
 		return FALSE;
 	}
+}
+
+
+/**
+ * XML编码
+ * @param mixed $data 数据
+ * @param string $root 根节点名
+ * @param string $item 数字索引的子节点名
+ * @param string $attr 根节点属性
+ * @param string $id   数字索引子节点key转换的属性名
+ * @param string $encoding 数据编码
+ * @return string
+ */
+function xml_encode($data, $root='think', $item='item', $attr='', $id='id', $encoding='utf-8') {
+	if(is_array($attr)){
+		$_attr = array();
+		foreach ($attr as $key => $value) {
+			$_attr[] = "{$key}=\"{$value}\"";
+		}
+		$attr = implode(' ', $_attr);
+	}
+	$attr   = trim($attr);
+	$attr   = empty($attr) ? '' : " {$attr}";
+	$xml    = "<?xml version=\"1.0\" encoding=\"{$encoding}\"?>";
+	$xml   .= "<{$root}{$attr}>";
+	$xml   .= data_to_xml($data, $item, $id);
+	$xml   .= "</{$root}>";
+	return $xml;
+}
+/**
+ * 数据XML编码
+ * @param mixed  $data 数据
+ * @param string $item 数字索引时的节点名称
+ * @param string $id   数字索引key转换为的属性名
+ * @return string
+ */
+function data_to_xml($data, $item='item', $id='id') {
+	$xml = $attr = '';
+	foreach ($data as $key => $val) {
+		if(is_numeric($key)){
+			$id && $attr = " {$id}=\"{$key}\"";
+			$key  = $item;
+		}
+		$xml    .=  "<{$key}{$attr}>";
+		$xml    .=  (is_array($val) || is_object($val)) ? data_to_xml($val, $item, $id) : $val;
+		$xml    .=  "</{$key}>";
+	}
+	return $xml;
 }
 
 

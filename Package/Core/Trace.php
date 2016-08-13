@@ -56,6 +56,7 @@ class Trace{
 		$basic['memory'] = (self::$memory_end - self::$memory_start) / 1024;
 
 
+
 		if(session_status() != PHP_SESSION_ACTIVE) session_start();
 		$basic['session_id'] = session_id();
 
@@ -77,8 +78,7 @@ class Trace{
 
 			}
 			$html .= '</ol></div>';
-
-
+			$nowtime = date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']);
 
 		}
 
@@ -94,12 +94,17 @@ class Trace{
 <div id="think_page_trace_tab_cont" style="overflow:auto;height:212px;padding: 0; line-height: 24px">
 	<div style="display:none;">
     <ol style="padding: 0; margin:0">
-	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">请求信息 : {$basic['request']}</li>
+	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">请求信息 : {$basic['request']}
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	{$_SERVER['REQUEST_METHOD']}</li>
+	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">请求脚本: {$_SERVER['SCRIPT_NAME']}</li>
+	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px"> IP 地 址 : {$_SERVER['REMOTE_ADDR']}</li>
 	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">运行时间 : {$basic['runtime']}</li>
 	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">内存开销 : {$basic['memory']} kb</li>
 	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">文件加载 : {$basic['count_file_load']} </li>
 
 	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">会话信息 : SESSION_ID = {$basic['session_id']}</li>
+	<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px">当前时间 : {$nowtime}</li>
 	</ol>
     </div>
 {$html}

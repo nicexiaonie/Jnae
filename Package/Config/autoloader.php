@@ -4,7 +4,7 @@ return array(
 
 	//自动函数库加载
 	'helpers'	=>	array(
-
+		'/string'
 	),
 
 	//自动配置文件加载

@@ -105,13 +105,10 @@ class Config  {
 	 */
 	public static function get($name){
 		$key = explode('/',$name);
-
-
 		if(count($key) == 1){
 			array_unshift($key,'config');
 		}
 		$config = self::$config;
-
 		//show($config);
 		foreach($key as $v){
 			if(!empty($v)) $config = $config[$v];

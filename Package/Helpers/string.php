@@ -23,12 +23,21 @@ function uuid() {
 function keyGen() {
 	return str_replace('-','',substr(uuid(),1,-1));
 }
+
+/**
+ * 输出
+ * @return string
+ */
+function output($value,$default = '----') {
+	return empty($value) ? $default : $value;
+}
+
 /**
  * 检查字符串是否是UTF8编码
  * @param string $string 字符串
  * @return Boolean
  */
-function isUtf8($str) {
+function is_utf8($str) {
 	$c=0; $b=0;
 	$bits=0;
 	$len=strlen($str);

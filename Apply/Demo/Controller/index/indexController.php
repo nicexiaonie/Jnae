@@ -4,6 +4,7 @@ use Core\Controller;
 use Core\Loaders;
 use View\View;
 use Library\Cache;
+use Library\Redis;
 
 class IndexController extends Controller{
 
@@ -13,17 +14,10 @@ class IndexController extends Controller{
 
 	}
 
+
 	public function index(){
 
-
-
-
 	}
-
-
-
-
-
 
 
 

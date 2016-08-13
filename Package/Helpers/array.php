@@ -1,5 +1,4 @@
 <?php
-
 /**
  * array_depth	获取数组深度
  * @param	array
