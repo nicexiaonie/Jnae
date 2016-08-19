@@ -49,10 +49,19 @@ class Config  {
 				}
 			}
 
-		//Step2、依次加载模块配置，公共配置，系统配置等文件，进行合并
+		//step2、增加配置环境管理
+			$environ = Config::get('ENVIRON');
+			if(!empty($environ) && !empty($_SERVER['ENVIRON'])){
+				if(!empty($environ[$config_name]) && !empty($environ[$config_name][$_SERVER['ENVIRON']])){
+					$file = $environ[$config_name][$_SERVER['ENVIRON']];
+				}
+			}
+
+		//Step3、依次加载模块配置，公共配置，系统配置等文件，进行合并
 			$config = array();	//加载的配置
 			$config_tmp = array();	//临时配置存放
 			foreach(self::$_config_paths as $v){
+
 				$file_path = rtrim($v,'/').'/'.$file.'.php';
 				if(is_file($file_path)){
 					trace_add('load_config',$file_path);	//记录加载文件

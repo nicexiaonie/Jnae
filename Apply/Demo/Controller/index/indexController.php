@@ -5,6 +5,7 @@ use Core\Loaders;
 use View\View;
 use Library\Cache;
 use Library\Redis;
+use Core\Config;
 
 class IndexController extends Controller{
 

@@ -10,20 +10,16 @@ return array(
 		'dbdriver' => 'mysql',
 
 		//数据库的主机名，通常位于本机，可以表示为 localhost
-		//'hostname' => '123.57.63.26',
-		//'hostname' => 'ali.server.xiaonie365.net',
 		'hostname' => 'localhost',
 
 		//你需要连接的数据库名
 		'database' => 'jnae',
 
 		//需要连接到数据库的用户名.
-		//'username' => 'jnae',
 		'username' => 'root',
 
 		//登陆数据库的密码.
 		'password' => 'cc1925612f',
-		//'password' => 'RZznZEWd',
 
 		//表前缀
 		'prefix'  =>   'phome_',

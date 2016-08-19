@@ -136,6 +136,19 @@ return array(
 
 
 
+	/*
+	 * 配置环境映射
+	 */
+	'ENVIRON' => array(
+		'db'	=>	array(
+			'develop'	=>	'develop_db',
+		)
+	),
+
+
+
+
+
 
 );
 
