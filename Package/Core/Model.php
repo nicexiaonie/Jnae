@@ -46,8 +46,9 @@ class Model extends Db{
 				throw new Exception("错误：{$key} 方法不存在！");
 			}
 
-		//整理调用发法使用的参数
-		list($value1,$value2,$value3,$value4) = $value;
+		//整理调用方法使用的参数
+		$value = array_pad($value,3,null);
+		@list($value1,$value2,$value3) = $value;
 
 		//step2、调用对象方法  增加前置操作  后置操作
 			$before_function_name = '_before_'.$key;

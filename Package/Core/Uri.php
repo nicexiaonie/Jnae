@@ -11,12 +11,10 @@ class Uri {
 
 	private $protocol = '';
 
-	public function _initialize($app){
+	public function _initialize(){
 
 		//step1、解析URI
 			Config::load('Uri');
-
-			$this->config = $app->config;
 
 			$protocol = $this->protocol = Config::get('uri/protocol');
 
@@ -40,10 +38,7 @@ class Uri {
 			$uri = rtrim($uri,'.html');
 			$this->_set_uri_string($uri);
 
-		//step2、确定模块 分组  控制器 操作  并给予默认
-			//$result = (Object)array();
-			//确定模块	Config::get('uri/function_default')
-
+		//step2、确定模块 分组  控制器 操作  并给予默认)
 			(empty($this->segments)) ?
 				$this->module_name = ucfirst(strtolower(Config::get('uri/module_default'))) :
 				$this->module_name = ucfirst(strtolower(array_shift($this->segments)));
@@ -68,14 +63,6 @@ class Uri {
 			if(!empty($this->directory_name)) define('DIRECTORY_NAME',$this->directory_name);
 			if(!empty($this->controller_name)) define('CONTROLLER_NAME',$this->controller_name);
 			if(!empty($this->function_name)) define('FUNCTION_NAME',$this->function_name);
-
-/*
-		show(MODULE_NAME);
-		show(DIRECTORY_NAME);
-		show(CONTROLLER_NAME);
-		show(FUNCTION_NAME);
-*/
-
 
 	}
 

@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * 	有效位置：
+ * 			/[PACKAGE_DIR]/Config/
+ * 			/[APP_PATH]/Config/
+ *
+ */
+
+
 return array(
 
 	//url模式

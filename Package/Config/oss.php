@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * 	有效位置：
+ * 			/[PACKAGE_DIR]/Config/
+ * 			/[APP_PATH]/Config/
+ * 			/[APP_PATH]/[模块]/Config/
+ *
+ */
+
 return array(
 
 	//默认驱动
@@ -10,10 +19,10 @@ return array(
 
 
 	'OSS_1'	=>	array(
-		 'accessKeyId'	=>	"dL4MqW5zpUdUCEpw",
-		 'accessKeySecret'	=>	"dN7jE1EEepvX1eeQ3I1h0TY1eDqZ7u",
-		 'endpoint'	=>	"aliyun.oss.xiaonie365.net",
-		 'bucket'	=>	'xiaonie365',
+		 'accessKeyId'	=>	"################",
+		 'accessKeySecret'	=>	"###############",
+		 'endpoint'	=>	"############",
+		 'bucket'	=>	'#####',
 	),
 
 );

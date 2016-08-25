@@ -3,24 +3,28 @@ use \Core\Config;
 use \Core\Loaders;
 use \Core\Uri;
 use \Core\Trace;
+use \Core\Hook;
+use \Core\Handler;
+
+
 
 class App {
 
 	private static $instance;	//单例
 
-	/*
+	/**
 	 * 	初始化：
 	 *
 	 */
 	public function run(){
 
 		header("Content-type: text/html; charset=utf-8");
-		ini_set('display_errors', true);
-		error_reporting(E_ALL & ~E_NOTICE);
+		ini_set('display_errors', 0);
+		error_reporting(0);
+		set_error_handler(array(new Handler(),'handle'));
+		register_shutdown_function(array(new Handler(),'handleFatal'));
 
-
-
-		if(TRACE) Trace::start();
+		Trace::start();
 
 		Config::_initialize();
 		Loaders::_initialize();
@@ -28,7 +32,12 @@ class App {
 		//初始化URI类
 		$this->uri = new Uri();
 		if(method_exists($this->uri,'_initialize'))
-			$this->uri->_initialize($this);
+			$this->uri->_initialize();
+
+		Config::addPath(APP_PATH.MODULE_NAME.'/Config/');
+
+		#初始化钩子
+		Hook::_initialize();
 
 		$this->prepare();	//进行准备工作
 
@@ -38,16 +47,16 @@ class App {
 
 		//开始执行
 		$this->execute();
-
-
 	}
 
-	/*
+	/**
 	 * 	整理准备工作：
 	 * 		1、添加配置目录
 	 *
 	 */
 	public function prepare(){
+		#应用初始化
+		Hook::listen('app_init');
 		//step1、添加配置文件目录
 			unset($config_dir);
 			$config_dir[] = rtrim(APP_PATH,'/');
@@ -69,12 +78,15 @@ class App {
 				});
 
 	}
-	/*
-	 *
+	/**
 	 * 	开始执行控制器
 	 *
 	 */
 	public function execute(){
+
+		#应用开始标签位
+		Hook::listen('app_begin');
+
 		//step1、确定控制器路径
 			if(!empty($this->uri->module_name))
 				$path[] = ($this->uri->module_name);
@@ -90,22 +102,28 @@ class App {
 			if(!class_exists($class)){
 				show_error('Controller('.$class.') does not exist');
 			}
-			$Object = new $class();
-			$Object->_execute();
 
 
-		if(TRACE) Trace::finish();
+				$Object = new $class();
+				$Object->_execute();
+
+
+			unset($Object);
+
+		#应用结束标签位
+		Hook::listen('app_end');
+
+
+
 	}
 
 	public function __destruct (){
-
+		if(Config::get('SHOW_TRACE')) Trace::finish();
 		Config::destruct();	//处理配置缓存
-
-
 
 	}
 
-	/*
+	/**
 	 * 	获取对象
 	 */
 	public static function  get_instance(){

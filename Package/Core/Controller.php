@@ -2,6 +2,7 @@
 namespace Core;
 
 use View\View;
+use Core\Hook;
 
 
 abstract class Controller{
@@ -10,6 +11,8 @@ abstract class Controller{
 	private  $_get_instance;
 
 	public function __construct(){
+		#控制器开始标签位
+		Hook::listen('action_begin');
 		$this->_get_instance = get_instance();
 	}
 
@@ -105,7 +108,7 @@ abstract class Controller{
 	 * @return void
 	 */
 	private function dispatchJump($message,$status=1,$jumpUrl='',$ajax=false) {
-
+		$waitSecond = is_bool($ajax) ? 3 : $ajax;	//等待时间 S
 		if(true === $ajax || IS_AJAX) {// AJAX提交
 			$data['info']   =   $message;
 			$data['status'] =   $status;
@@ -119,6 +122,7 @@ abstract class Controller{
 		$view->assign('info',$message);
 		$view->assign('status',$status);
 		$view->assign('url',$jumpUrl);
+		$view->assign('waitSecond',$waitSecond);
 
 		$view->display();
 
@@ -157,6 +161,15 @@ abstract class Controller{
 				// 用于扩展其他返回格式数据
 				break;
 		}
+	}
+
+
+
+	public function __destruct(){
+
+		#控制器结束标签位
+		Hook::listen('action_end');
+
 	}
 
 

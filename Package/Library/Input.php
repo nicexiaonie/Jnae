@@ -43,6 +43,7 @@ class Input {
 	}
 
 
+
 	private function _fetch_from_array(& $param,$index,$default,$xss_clean){
 
 		//处理获取多个值

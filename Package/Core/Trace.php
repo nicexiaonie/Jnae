@@ -1,6 +1,9 @@
 <?php
 namespace Core;
 
+
+use Core\Config;
+
 class Trace{
 
 	static public $runtime_start = 0;
@@ -26,25 +29,22 @@ class Trace{
 		'debug' =>	'调试',
 	);
 	static function write($key,$value){
-		if(!TRACE) return false;	//如果没开启则不希尔
-
 		if(self::$keys[$key]){
 			self::$trace_info[$key][] = $value;
 		}
 
 	}
 	static function start(){
-
+		if(session_status() != PHP_SESSION_ACTIVE) session_start();
 		self::$runtime_start = microtime(true);	//开始时间
 		self::$memory_start	= memory_get_usage();
 	}
 
 	static function finish(){
-
 		self::$runtime_end = microtime(true);
 		self::$memory_end	= memory_get_usage();
 
-		if(TRACE) self::show();
+		if(Config::get('SHOW_TRACE')) self::show();
 	}
 
 
@@ -55,14 +55,11 @@ class Trace{
 		$basic['runtime'] = sprintf('%.4f',self::$runtime_end - self::$runtime_start) .' s';
 		$basic['memory'] = (self::$memory_end - self::$memory_start) / 1024;
 
-
-
-		if(session_status() != PHP_SESSION_ACTIVE) session_start();
 		$basic['session_id'] = session_id();
 
 		$menu = '';
 		$html = '';
-
+		$basic['count_file_load'] = 0;
 		foreach(self::$trace_info as $key => $value){
 
 			$count = count($value);

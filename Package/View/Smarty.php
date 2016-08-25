@@ -14,6 +14,7 @@ namespace View;
 
 use \Core\Config;
 use Core\Loaders;
+use \Core\Hook;
 
 require_once __DIR__.'/Smarty/Smarty.class.php';
 
@@ -29,6 +30,7 @@ class Smarty{
 	}
 
 	public function _init(){
+
 		$smarty = $this->smarty;
 		//step1、设置参数
 		$smarty->template_dir = View::$temp_dir;	//设置模版目录
@@ -43,7 +45,6 @@ class Smarty{
 
 		//step2、注册函数
 		$function = Config::get('view/register_function');
-		Loaders::helper('smarty');
 		if(!empty($function))
 			foreach($function as $k=>$v){
 				$smarty->register_function($k,$v);	//注册函数
@@ -51,9 +52,11 @@ class Smarty{
 	}
 
 	public function display($filename = null){
-
+		$this->_init();
 		if(empty($filename))
 			$filename = View::$filename;
+		else
+			$filename .= Config::get('template_suffix');
 
 		//step1、分配style配置变量
 			$config = Config::get('view/variable');
@@ -66,13 +69,19 @@ class Smarty{
 				show_error('Template file('.$temp_dir.$filename.') does not exist');
 			}
 
-		$this->_init();
+
 		$this->smarty->display($filename);
 	}
 
 	public function __call($key,$value){
 		list($v1,$v2) = $value;
 		return $this->smarty->$key($v1,$v2);
+	}
+
+
+	public function __destruct (){
+		#视图输出结束标签位
+		Hook::listen('view_end');
 	}
 
 

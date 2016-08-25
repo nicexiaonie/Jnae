@@ -26,7 +26,6 @@ abstract class Db {
 				$default_db = $db;
 			}
 			$db_config = Config::get('db/'.$default_db);
-
 		if($db_config){
 
 			//step2、加载驱动文件

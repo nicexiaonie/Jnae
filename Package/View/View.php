@@ -7,6 +7,8 @@
  */
 namespace View;
 use Core\Config;
+use Core\Hook;
+
 class View {
 
 	/**
@@ -54,16 +56,19 @@ class View {
 	 */
 	public static function init($value = null){
 
+		#视图输出开始标签位
+		Hook::listen('view_begin');
+
 		//step1、实例相应驱动
 			$class = '\\View\\'.Config::get('template_driver');
 			$view = new $class($value);
 
 		//step2、设置参数
-			self::setBasicDir();
-			self::setTempDir();
-			self::setCompileDir();
-			self::setCacheDir();
-			self::setFileName();
+			if(empty(self::$basic_dir)) self::setBasicDir();
+			if(empty(self::$temp_dir)) self::setTempDir();
+			if(empty(self::$compile_dir)) self::setCompileDir();
+			if(empty(self::$cache_dir)) self::setCacheDir();
+			if(empty(self::$filename)) self::setFileName();
 			//show(self::$basic_dir);
 			//show(self::$temp_dir);
 			//show(self::$compile_dir);
@@ -111,6 +116,7 @@ class View {
 
 
 		$dir = join('/',$path).'/';
+
 		self::create_dir($dir);
 		return self::$basic_dir = $dir;
 
@@ -161,86 +167,6 @@ class View {
 		if(!empty($dir) && !is_dir($dir)){
 			create_dir($dir);
 		}
-	}
-
-
-
-
-
-
-
-
-
-	//--------------------------------------------
-
-
-
-
-
-
-
-
-	private static $assign;
-	private static $tempDir;
-
-	private static  function assign($key=null,$value=null){
-		$assign = self::$assign;
-		$assign[$key] = $value;
-		self::$assign = $assign;
-	}
-	private static function display_($value = null){
-		static $template_driver;
-
-		//step1、确定模版文件，
-			empty($value) ?
-				$temp_file = FUNCTION_NAME.Config::get('template_suffix') :
-				$temp_file = $value.Config::get('template_suffix');
-		//step2、加载驱动
-			if(!class_exists('template_driver',false)) load(PACKAGE_DIR.'View/Template_driver.php');
-			if(empty($template_driver)) $template_driver = new Template_driver(self);
-			if(!empty(self::$assign)){
-				foreach(self::$assign as $k=>$v){
-					$template_driver->assign($k,$v);
-				}
-			}
-
-		if(empty(self::$tempDir)) self::setTempDir();
-		//ECHO Self::$tempDir;
-		//show($temp_file);
-		$template_driver -> setTempDir(self::$tempDir);	//设置目录
-		$template_driver -> display($temp_file);
-	}
-
-	/*
-	 * 设置模版目录
-	 */
-	private static function setTempDiraa($tempDir = null){
-
-		//默认获取模版目录
-
-		if(!is_exist(Config::get('template_path'))){
-			$path[] = 'View';
-		}else{
-			array_unshift($path,Config::get('template_path'));
-		}
-		if(is_exist(trim(Config::get('template_default'),'/')))
-			$path[] = trim(Config::get('template_default'),'/');
-
-
-		if(empty($tempDir)){
-			if(defined('DIRECTORY_NAME')) $path[] = DIRECTORY_NAME;
-			if(defined('CONTROLLER_NAME')) $path[] = CONTROLLER_NAME;
-		}else{
-			$tempDir = explode('/',$tempDir);
-			array_unshift($path,array_shift($tempDir));
-			if(defined('DIRECTORY_NAME')) $path[] = array_shift($tempDir);
-			if(defined('CONTROLLER_NAME')) $path[] = array_shift($tempDir);
-		}
-		if(defined('MODULE_NAME')) array_unshift($path,MODULE_NAME);
-		$tempDir = APP_PATH
-			.implode('/',$path).'/';
-
-		return self::$tempDir = $tempDir;
 	}
 
 

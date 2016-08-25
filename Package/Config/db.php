@@ -1,4 +1,13 @@
 <?php
+
+/**
+ * 	有效位置：
+ * 			/[PACKAGE_DIR]/Config/
+ * 			/[APP_PATH]/Config/
+ * 			/[APP_PATH]/[模块]/Config/
+ *
+ */
+
 return array(
 	'default_db' => 'default',
 
@@ -19,7 +28,7 @@ return array(
 		'username' => 'root',
 
 		//登陆数据库的密码.
-		'password' => 'cc1925612f',
+		'password' => '12345',
 
 		//表前缀
 		'prefix'  =>   'phome_',

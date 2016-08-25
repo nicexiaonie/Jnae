@@ -3,17 +3,46 @@ namespace Core;
 
 class Config  {
 
+	/**
+	 * 配置文件环境
+	 * @var array
+	 */
 	private static $_config_paths = array();
 
+	/**
+	 * 配置：每个配置文件的值
+	 * @var array
+	 */
 	private static $config = array();
 
-	private static $config_cache;	//缓存
+	/**
+	 * 配置缓存
+	 * @var array
+	 */
+	private static $config_cache;
 
-	private static $config_write;	//缓存预写入
+	/**
+	 * 缓存预写入：此变量最终写入缓存
+	 * @var array
+	 */
+	private static $config_write;
 
-	public static $is_cache = false;	//是否开启缓存
-	public static $time_cache = 7200;	// (S)缓存周期
+	/**
+	 * 缓存开启
+	 * @var bool
+	 */
+	public static $is_cache = false;
 
+	/**
+	 * 缓存有效周期：S 秒
+	 * @var int
+	 */
+	public static $time_cache = 7200;
+
+	/**
+	 * 初始化操作
+	 * static
+	 */
 	public static function _initialize(){
 		self::$_config_paths[]= PACKAGE_DIR.'Config/';	//配置目录
 		self::$_config_paths[]= APP_PATH.'Config/';	//公共配置目录
@@ -26,8 +55,17 @@ class Config  {
 		}
 	}
 
+	/**
+	 * 添加配置文件环境
+	 * param string $path  路径
+	 * static
+	 */
+	public static function addPath($path){
+		self::$_config_paths[]= $path;
+	}
 
-	/*
+
+	/**
      * @introduce:  根据医师类型 形成查询条件
      * @param1：	需要加载的文件
 	 * @param2：	允许屏蔽当配置文件不存在时产生的错误信息:
@@ -49,7 +87,7 @@ class Config  {
 				}
 			}
 
-		//step2、增加配置环境管理
+		//step2、增加配置环境映射管理
 			$environ = Config::get('ENVIRON');
 			if(!empty($environ) && !empty($_SERVER['ENVIRON'])){
 				if(!empty($environ[$config_name]) && !empty($environ[$config_name][$_SERVER['ENVIRON']])){
@@ -69,6 +107,7 @@ class Config  {
 					$loaded = true;
 				}
 			}
+
 			if(!empty($config_tmp)){
 				foreach($config_tmp as $item){
 					if(!empty($item)){
@@ -80,17 +119,18 @@ class Config  {
 				}
 			}
 
-		//Step3、将配置添加至config,和$config_write预写入变量中
+		//Step4、将配置添加至config,和$config_write预写入变量中
 			self::$config[$config_name] = $config;
 			self::$config_write['overtime'][$config_name] = time()+self::$time_cache;
 			self::$config_write['config'][$config_name] = $config;
 
 	}
-	/*
-	 * 	手动调用析构方法
+
+	/**
+	 * 手动调用析构方法
+	 * static
 	 */
 	public static function destruct(){
-
 		/*
 		 * 	生成缓存
 		 *		如果缓存开启，且预写入缓存不为空 则写入
@@ -104,13 +144,14 @@ class Config  {
 			if(!empty(self::$config_cache))
 				file_put_contents($config_cache_file,json_encode(self::$config_cache));
 		}
-
-
 	}
 
 
-	/*
+	/**
 	 * 	获取配置
+	 * 		[key]	获取conifg配置中的[key]
+	 * 		db/	获取db配置中的全部
+	 * 		db/[key]	获取db配置中的[key]项
 	 */
 	public static function get($name){
 		$key = explode('/',$name);
@@ -118,12 +159,28 @@ class Config  {
 			array_unshift($key,'config');
 		}
 		$config = self::$config;
-		//show($config);
 		foreach($key as $v){
+			if(!isset($config[$v])) $config[$v] = null;#防止变量警告
 			if(!empty($v)) $config = $config[$v];
 		}
 		return $config;
 	}
+
+	/**
+	 * 	临时更改配置
+	 */
+	public static function set($name,$value){
+		$key = explode('/',$name);
+		if(count($key) == 1){
+			array_unshift($key,'config');
+		}
+		$config = & self::$config;
+		$config[$key[0]][$key[1]] = $value;
+		return true;
+	}
+
+
+
 }
 
 ?>

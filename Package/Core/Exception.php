@@ -12,6 +12,11 @@ class Exception extends \Exception
      */
     protected $data = [];
 
+	public function __construct($error){
+
+		echo $error;
+	}
+
     /**
      * 设置异常额外的Debug数据
      * 数据将会显示为下面的格式

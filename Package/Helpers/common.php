@@ -53,7 +53,7 @@ function M($table = null , $db = false){
 }
 
 
-/*
+/**
  * 加载实例化模型
  *
  *	区分大小写
@@ -111,7 +111,7 @@ function D($value = null , $layer = null){
 
 
 
-/*
+/**
  * 	url类中用到  Security中xss用到
  */
 function &remove_invisible_characters($str, $url_encoded = TRUE)
@@ -140,7 +140,6 @@ function &remove_invisible_characters($str, $url_encoded = TRUE)
 function &show_error($message)
 {
 	if(DEBUG){
-
 		exit($message);
 	}else{
 		trace_add('debug',$message);
@@ -150,15 +149,14 @@ function &show_error($message)
 
 function trace_add($key,$value){
 	static $trace_info_tmp;
-
-	if(class_exists('\Core\Trace')){
-		if($trace_info_tmp){
+	if(class_exists('\Core\Trace') && class_exists('\Core\Config')){
+		if(!empty($trace_info_tmp)){
 			foreach($trace_info_tmp as $k=>$v){
-				foreach($v as $key_tmp=>$value_tmp){
+				foreach($v as $value_tmp){
 					\Core\Trace::write($k,$value_tmp);
 				}
 			}
-			$trace_info_tmp = false;
+			$trace_info_tmp = array();
 		}
 		\Core\Trace::write($key,$value);
 	}else{
@@ -563,6 +561,8 @@ function data_to_xml($data, $item='item', $id='id') {
 	}
 	return $xml;
 }
+
+
 
 
 ?>

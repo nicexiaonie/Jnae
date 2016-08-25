@@ -1,6 +1,17 @@
 <?php
+
+/**
+ * 	有效位置：
+ * 			/[PACKAGE_DIR]/Config/
+ * 			/[APP_PATH]/Config/
+ * 			/[APP_PATH]/[模块]/Config/
+ *
+ */
+
 return array(
 
+
+	'SHOW_TRACE' => true,
 
 	//自动渲染
 	'view_auto' => false,
@@ -141,7 +152,7 @@ return array(
 	 */
 	'ENVIRON' => array(
 		'db'	=>	array(
-			'develop'	=>	'develop_db',
+			//'develop'	=>	'develop_db',
 		)
 	),
 
