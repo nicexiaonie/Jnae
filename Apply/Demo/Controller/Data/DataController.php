@@ -10,10 +10,12 @@ class DataController extends Controller{
 
 
 	public function _initialize(){
-		$_POST['cid'] = 4;
-		$_POST['addtime'] = time();
+
+		$_POST['cid'] = 88;
+		//$_POST['id'] = 66;
+		//$_POST['addtime'] = null;
 		$_POST['status'] = 0;
-		$_POST['userid'] = 1;
+		$_POST['userid'] = 2;
 		$_POST['title'] = '-----';
 		//$_POST['asaf'] = '标题';
 
@@ -21,10 +23,10 @@ class DataController extends Controller{
 
 
 	/**
-	 * 添加多条数据
+	 * 添加多条数据(模型)
 	 */
 	public function addMore(){
-		$m = M('add');
+		$m = D('Data/Add');
 		$data[] = $_POST;
 		$data[] = $_POST;
 		$result = $m->add($data);
@@ -39,8 +41,9 @@ class DataController extends Controller{
 	 *	修改一条数据 (模型)
 	 */
 	public function save(){
-		$m = D('Auto/Add');
-		$result = $m->where(array('id'=>10))->save();
+		$m = D('Data/Add');
+		$result = $m->save();
+		//$result = $m->where(array('id'=>10))->save();
 		if($result){
 			echo '成功';
 		}else{
@@ -52,9 +55,12 @@ class DataController extends Controller{
 	 * 添加一条数据(模型)
 	 */
 	public function add(){
-		$m = D('Data/Add');
+
+
+		$m = M('add','default');
 
 		$result = $m->add();
+
 		if($result){
 			echo '成功';
 		}else{

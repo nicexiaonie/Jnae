@@ -10,9 +10,15 @@
 
 return array(
 
-	//url模式
+	/*
+	 * url模式
+	 */
+	# localhost/Demo/Index/Index/two?aa=11
 	'protocol' => 'PATH_INFO',
-	//protocol = 'QUERY_STRING'
+
+	# localhost/index.php?m=Demo&d=Index&c=Index&f=two
+	#'protocol' => 'QUERY_STRING',
+
 	//protocol = 'REQUEST_URI'
 
 	//默认模块名

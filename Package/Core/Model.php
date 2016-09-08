@@ -8,6 +8,9 @@ use \Library\Validate;
 
 class Model extends Db{
 
+	const MODEL_INSERT          =   1;      //  插入模型数据
+	const MODEL_UPDATE          =   2;      //  更新模型数据
+
 	private $error = '';
 
 	public function __construct($db = null){
@@ -15,7 +18,6 @@ class Model extends Db{
 		parent::__construct($db);
 		if(method_exists($this,'_initialize'))
 			$this->_initialize();
-
 	}
 
 	/**
@@ -92,6 +94,7 @@ class Model extends Db{
 	 * 	自动对数据进行过滤和验证
 	 */
 	public function create($data = null,$scene = 0){
+		if(Config::get('AUTO_DATA_VALIDATOR') != true) return $data;
 		Loaders::helper('/array');
 
 		$depth = array_depth($data);
@@ -105,16 +108,15 @@ class Model extends Db{
 
 		if(empty($data)) $data = Input::post();
 		//过滤字段
-		if(!empty($this->_fields) || is_array($this->_fields)){
+		if(!empty($this->_fields) && is_array($this->_fields)){
 			foreach($data as $k=>&$v){
 				if(!in_array($k,$this->_fields)){
 					unset($data[$k]);
 				}
 			}
 		}
-
 		//数据合法验证
-		if(!empty($this->_validate) || is_array($this->_validate)){
+		if(!empty($this->_validate) && is_array($this->_validate)){
 			//获取验证实例
 			$validata = Validate::make($this->_validate);
 			if($validata->check($data,null,$scene) !== true){
@@ -127,6 +129,45 @@ class Model extends Db{
  	}
 
 	/**
+	 *	自动完成
+	 */
+	private function _auto($data,$scene = 0){
+		if(Config::get('AUTO_DATA_COMPLETE') != true) return $data;
+
+		if(empty($data)) return false;
+		$depth = array_depth($data);
+
+		if($depth > 1){
+			foreach($data as $k=>$v){
+				$data[$k] = $this->_auto($v,$scene);
+				if($data[$k] == false) return false;
+			}
+			return $data;
+		}
+
+		if(!empty($this->_auto)){
+			foreach($this->_auto as $v){
+				if(!empty($v[2]) && $v[2] != $scene) continue;
+				if(!empty($v[0]) && !empty($v[1]) && empty($data[$v[0]])){
+					switch($v[3]){
+						case 'function':
+							$data[$v[0]] = $v[1]();
+							break;
+						case 'field':
+							$data[$v[0]] = $data[$v[1]];
+							break;
+						default:
+							$data[$v[0]] = $v[1];
+							break;
+					}
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * 添加数据
 	 *  重写驱动add方法，增加对数据进行过滤验证操作
 	 *
@@ -134,13 +175,15 @@ class Model extends Db{
 	public function add($data = null){
 		if(empty($this->_db_driver)) show_error('This method(add) does not exist!');
 		$this->_getClassName();
-		$data = $this->create($data,1);	//数据验证
+		$data = $this->create($data,self::MODEL_INSERT);	//数据验证
+		$data = $this->_auto($data,self::MODEL_INSERT);	//自动完成
 		if($data == false) return false;
 		$result = $this->_db_driver->add($data);
-		if(!$result ||( is_array($result) && empty(array_filter($result)))){
+		if(!$result || empty($result) ||( is_array($result) && empty(array_filter($result)))){
 			$this->error = $this->_db_driver->error();
 			return false;
 		}
+		trace_add('sql',$this->_db_driver->_sql());
 		return $result;
 	}
 
@@ -152,13 +195,20 @@ class Model extends Db{
 	public function save($data = null){
 		if(empty($this->_db_driver)) show_error('This method(add) does not exist!');
 		$this->_getClassName();
-		$data = $this->create($data,2);
+		$data = $this->create($data,self::MODEL_UPDATE);	//自动验证
+		$data = $this->_auto($data,self::MODEL_UPDATE);	//自动完成
 		if($data == false) return false;
+		#寻找是否有主键
+		if(!empty($this->_fields) && !empty($this->_fields['major']) && !empty($data[$this->_fields['major']])){
+			$where[$this->_fields['major']] = $data[$this->_fields['major']];
+			$this->_db_driver->where($where);
+		}
 		$result = $this->_db_driver->save($data);
 		if(!$result){
 			$this->error = $this->_db_driver->error();
 			return false;
 		}
+		trace_add('sql',$this->_db_driver->_sql());
 		return $result;
 	}
 

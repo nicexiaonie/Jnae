@@ -336,7 +336,8 @@ class Validate{
 			if(empty($rule[0])){
 				return false;
 			}else{
-				list($rule[0],$attribute) = explode('|',$rule[0]);
+				$rule[0] .= '|';
+				@list($rule[0],$attribute) = explode('|',$rule[0]);
 				if(empty($attribute)) $attribute = $rule[0];
 			}
 

@@ -57,6 +57,7 @@ class App {
 	public function prepare(){
 		#应用初始化
 		Hook::listen('app_init');
+
 		//step1、添加配置文件目录
 			unset($config_dir);
 			$config_dir[] = rtrim(APP_PATH,'/');
@@ -98,7 +99,6 @@ class App {
 
 		//step2、初始化Controller  并执行
 			$class = '\\'.implode('\\',$path).'Controller';
-
 			if(!class_exists($class)){
 				show_error('Controller('.$class.') does not exist');
 			}

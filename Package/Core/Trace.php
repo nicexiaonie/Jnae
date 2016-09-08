@@ -3,6 +3,7 @@ namespace Core;
 
 
 use Core\Config;
+use Library\Session;
 
 class Trace{
 
@@ -35,7 +36,6 @@ class Trace{
 
 	}
 	static function start(){
-		if(session_status() != PHP_SESSION_ACTIVE) session_start();
 		self::$runtime_start = microtime(true);	//开始时间
 		self::$memory_start	= memory_get_usage();
 	}
@@ -55,7 +55,7 @@ class Trace{
 		$basic['runtime'] = sprintf('%.4f',self::$runtime_end - self::$runtime_start) .' s';
 		$basic['memory'] = (self::$memory_end - self::$memory_start) / 1024;
 
-		$basic['session_id'] = session_id();
+		$basic['session_id'] = Session::session_id();
 
 		$menu = '';
 		$html = '';

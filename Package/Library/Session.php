@@ -1,6 +1,9 @@
 <?php
 namespace Library;
-use Core\Config;
+
+use \Core\Config;
+use \Library\Session\Driver;
+
 class Session
 {
     protected static $prefix = '';
@@ -87,10 +90,9 @@ class Session
         }
         if (!empty($config['type'])) {
             // 读取session驱动
-            $class = false !== strpos($config['type'], '\\') ? $config['type'] : '\\Library\\Session\\Driver\\' . ucwords($config['type']);
+            $class = false !== strpos($config['type'], '\\') ? $config['type'] : 'Library\\Session\\Driver\\' . ucwords($config['type']);
 
 			$redis = new $class($config);
-
             // 检查驱动类
             if (!class_exists($class) || !session_set_save_handler($redis)) {
                 show_error('This class( '.$class.' ) does not exist');
@@ -103,6 +105,15 @@ class Session
         }
 		//echo 11;self::regenerate();
     }
+
+	/**
+	 * 获取session_id
+	 * @return string
+	 */
+	public static function session_id(){
+		!isset($_SESSION) && self::init();
+		return session_id();
+	}
 
     /**
      * session设置

@@ -2,6 +2,8 @@
 
 namespace Library;
 
+use \Core\Loaders;
+
 class File{
 
 	/**
@@ -48,10 +50,11 @@ class File{
 	 * static
 	 */
 	public function __construct($path = null){
-
-		$this->path = $path;
-		$directory = $this->directory = $this->basename();
-		$filename = $this->filename = $this->filename();
+		if(!empty($path)){
+			$this->path = $path;
+			$directory = $this->directory = $this->directory();
+			$filename = $this->filename = $this->filename();
+		}
 
 	}
 
@@ -81,7 +84,7 @@ class File{
 	 * 	获取所在目录
 	 * 	return bool
 	 */
-	private function basename(){
+	private function directory(){
 		return dirname($this->path).'/';
 	}
 
@@ -135,12 +138,10 @@ class File{
 	 * 	param string $length 默认读取1024字节
 	 * 	return bool
 	 */
-	public function fgets($length = '1024'){
+	public function fgets($length = 1024){
 		$this->setHandle('r');
-		if ($this->handle) {
-			if (!feof($this->handle)) {
-				$content = fgets($this->handle, $length);
-			}
+		if ($this->handle && !feof($this->handle)) {
+			$content = fgets($this->handle, $length);
 		}
 		return $content;
 	}
@@ -181,6 +182,160 @@ class File{
 		$content = file($this->path);
 		return $content;
 	}
+
+
+	/**
+	 * 	复制文件
+	 * 	param string||array $source 来源
+	 * 	param string $dest 目的地
+	 * 	param bool $cover 是否覆盖
+	 * 	return int
+	 */
+	public static function copy($source ,$dest = false ,$cover = false ){
+		if(is_string($source)) $source = array($source);
+
+		$doc = '.copy';
+		$record = array();
+		$result = array();
+		$newfile = '';
+		$directory = null;
+
+		foreach($source as $k=>$v){
+			//step1、分析新文件名
+				if(empty($dest)) {
+					$newfile = $v.$doc;
+				}else{
+					if( substr($dest,-1) == '/' ){
+						$directory = $dest;
+						$newfile = $dest.basename($v);
+					}else{
+						$directory = dirname($dest);
+						$newfile = $dest;
+					}
+				}
+
+			//step2、文件是否存在
+				if(is_file($newfile) && !$cover){
+					continue;
+				}
+
+			//step3、目录不存在则自动创建
+				if(!file_exists($directory) || !is_dir($directory)){
+					create_dir($directory);
+				}
+
+			//step4、记录操作
+				$record[$v] = $newfile;
+				if(copy($v,$newfile)){
+					$result[] = true;
+				}else{
+					$result[] = false;
+				}
+		}
+		Loaders::helper('/array');
+		return array_count($result,true);
+	}
+
+
+	/**
+	 * 	移动文件
+	 * 	param string||array $source 来源
+	 * 	param string $dest 目的地
+	 * 	param bool $cover 是否覆盖
+	 * 	return int
+	 */
+	public static function move($source ,$dest ,$cover = false ){
+		if(is_string($source)) $source = array($source);
+		if(empty($dest)) return false;
+
+		$result = array();
+		foreach($source as $k=>$v){
+			//step1、分析新文件名
+				if( substr($dest,-1) == '/' ){
+					$directory = $dest;
+					$newfile = $dest.basename($v);
+				}else{
+					$directory = dirname($dest);
+					$newfile = $dest;
+				}
+
+			//step2、文件是否存在
+				if(is_file($newfile) && !$cover){
+					continue;
+				}
+
+			//step3、目录不存在则自动创建
+				if(!file_exists($directory) || !is_dir($directory)){
+					create_dir($directory);
+				}
+
+			//step4、记录操作
+				$record[$v] = $newfile;
+				if(rename($v,$newfile)){
+					$result[] = true;
+				}else{
+					$result[] = false;
+				}
+		}
+
+		Loaders::helper('/array');
+		return array_count($result,true);
+
+	}
+
+
+	/**
+	 * 	获取一个文件详细信息
+	 * 	param string||array $returned_values
+	 * 	return array
+	 */
+	function info($returned_values = array('name', 'server_path', 'size', 'date'))
+	{
+		$file = $this->path;
+		if ( ! file_exists($file))
+		{
+			return FALSE;
+		}
+
+		if (is_string($returned_values))
+		{
+			$returned_values = explode(',', $returned_values);
+		}
+
+		foreach ($returned_values as $key)
+		{
+			switch ($key)
+			{
+				case 'name':
+					$fileinfo['name'] = basename($file);
+					break;
+				case 'server_path':
+					$fileinfo['server_path'] = $file;
+					break;
+				case 'size':
+					$fileinfo['size'] = filesize($file);
+					break;
+				case 'date':
+					$fileinfo['date'] = filemtime($file);
+					break;
+				case 'readable':
+					$fileinfo['readable'] = is_readable($file);
+					break;
+				case 'writable':
+					$fileinfo['writable'] = is_really_writable($file);
+					break;
+				case 'executable':
+					$fileinfo['executable'] = is_executable($file);
+					break;
+				case 'fileperms':
+					$fileinfo['fileperms'] = fileperms($file);
+					break;
+			}
+		}
+
+		return $fileinfo;
+	}
+
 
 	/**
 	 *	析构方法:

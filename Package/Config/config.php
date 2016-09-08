@@ -11,6 +11,7 @@
 return array(
 
 
+
 	'SHOW_TRACE' => true,
 
 	//自动渲染
@@ -37,7 +38,7 @@ return array(
 	'template_cache_lifetime' => 110,
 	//是否每次都进行重新编译
 	'force_compile' => true,
-	'left_delimiter' => '{',
+	'left_delimiter' => '{:',
 	'right_delimiter' => '}',
 	/*
 	 * 模版文件名大小写  默认由URL决定
@@ -72,12 +73,12 @@ return array(
 		 * 		Redis
 		 *
 		 */
-		'type'	=>	'Redis',
+		'type'	=>	'',
 		'prefix'	=>	'jnae',
 		'expire'	=>	0,	//session有效时间
 		//'id'	=>	'243567',	//session_id	直接设置sessionid
 		//已变量的方式获取session_id 与$_REQUEST中 var_session_id做为键
-		//'var_session_id'	=>	'5',
+		'var_session_id'	=>	'PHPSESSION',
 		/*
 		 *用在 cookie 或者 URL 中的会话名称， 例如：PHPSESSID。
 		 * 只能使用字母和数字作为会话名称，建议尽可能的短一些，
@@ -155,6 +156,16 @@ return array(
 			//'develop'	=>	'develop_db',
 		)
 	),
+
+
+	/*
+	 * 模型管理
+	 */
+	#数据自动验证过滤
+	'AUTO_DATA_VALIDATOR' => true,
+
+	#数据自动完成（补全）
+	'AUTO_DATA_COMPLETE' => true,
 
 
 

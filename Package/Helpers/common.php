@@ -40,15 +40,16 @@ function M($table = null , $db = false){
 	}else{
 		$default_db = $db;
 	}
+	$key = md5($default_db.$table);
 
-	if(empty($_model[$default_db])){
+	if(empty($_model[$key])){
 		$m = new \Core\Model($default_db);
 		$m -> _set_table($table);
-		$_model[$default_db] = $m;
+		$_model[$key] = $m;
 		return $m;
 	}else{
-		$_model[$default_db] -> _set_table($table);
-		return $_model[$default_db];
+		$_model[$key] -> _set_table($table);
+		return $_model[$key];
 	}
 }
 

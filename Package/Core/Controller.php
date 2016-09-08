@@ -110,6 +110,7 @@ abstract class Controller{
 	private function dispatchJump($message,$status=1,$jumpUrl='',$ajax=false) {
 		$waitSecond = is_bool($ajax) ? 3 : $ajax;	//等待时间 S
 		if(true === $ajax || IS_AJAX) {// AJAX提交
+			\Core\Config::set('SHOW_TRACE',false);
 			$data['info']   =   $message;
 			$data['status'] =   $status;
 			$data['url']    =   $jumpUrl;

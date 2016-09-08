@@ -84,6 +84,70 @@ function array_strval(&$value){
 }
 
 /**
+ * array_column_count	数组计算
+ * 	统计array二维数组中的[cloumn]键中的数据
+ * @param	array
+ * @param	string
+ * @return	array
+ */
+function array_column_count($array,$cloumn){
+	$result = array();
+	foreach($array as $k=>$v){
+		$result[$v[$cloumn]] ++;
+	}
+	return $result;
+}
+
+/**
+ * array_count	一维数组统计
+ * @param	array
+ * @param	string
+ * @return	array
+ */
+function array_count($array,$value){
+	$result = 0;
+	foreach($array as $k=>$v){
+		if($v === $value) $result++;
+	}
+	return $result;
+}
+
+/**
+ * array_repetition	重复一个数组
+ * @param array "要重复的数组"
+ * @param int '重复次数'
+ * @return	array
+ */
+function array_repetition($array,$int = 1){
+	$result = $array;
+	for($i=0;$i<$int;$i++){
+		foreach($array as $k=>$v){
+			$result[] = $v;
+		}
+	}
+	return $result;
+}
+
+/**
+ * array_fetch	获取数组值
+ * @param array '条件'
+ * @param int '重复此时'
+ * @param array '操作数组'
+ * @return	array
+ */
+function array_fetch($search = array(),$key = '',$object = array()){
+	foreach($object as $k=>$v){
+		foreach($search as $search_k=>$search_v){
+			if($v[$search_k] != $search_v){
+				unset($object[$k]);
+				break;
+			}
+		}
+	}
+	return empty($key) ? $object : array_column($object,$key);
+}
+
+/**
  * Element
  *
  * 检查指定的key是否存在于数组中  默认null

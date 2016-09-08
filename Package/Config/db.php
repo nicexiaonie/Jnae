@@ -28,10 +28,10 @@ return array(
 		'username' => 'root',
 
 		//登陆数据库的密码.
-		'password' => '12345',
+		'password' => 'cc1925612f',
 
 		//表前缀
-		'prefix'  =>   'phome_',
+		'prefix'  =>   '',
 
 		//端口
 		'port'    =>   '3306',
@@ -60,7 +60,7 @@ return array(
 		'dsn' =>  '',
 	),
 
-	'mysql'	=>	array(
+	'user'	=>	array(
 		//驱动类型
 		'driver'    =>   'medoo',
 
@@ -71,7 +71,7 @@ return array(
 		'hostname' => 'localhost',
 
 		//你需要连接的数据库名
-		'database' => 'jnae',
+		'database' => 'test',
 
 		//需要连接到数据库的用户名.
 		'username' => 'root',
@@ -80,7 +80,7 @@ return array(
 		'password' => 'cc1925612f',
 
 		//表前缀
-		'prefix'  =>   'phome_',
+		'prefix'  =>   '',
 
 		//端口
 		'port'    =>   '3306',

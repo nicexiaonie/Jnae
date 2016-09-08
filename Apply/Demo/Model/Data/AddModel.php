@@ -11,11 +11,11 @@ class AddModel extends Model{
 	}
 
 	/**
-	 * 	表字段：
-	 *  在进行添加等操作是 如果此变量存在，则自动过滤字段值
+	 * 	表字段：(主键要放在[major]位置上)
+	 *  在进行添加更新等操作是 如果此变量存在，则自动过滤字段值
 	 */
 	protected $_fields = array(
-		'id',
+		'major'=>'id',
 		'cid',
 		'addtime',
 		'status',
@@ -29,8 +29,8 @@ class AddModel extends Model{
 	 * 		Validate类中场景自定义，默认全部验证
 	 * 		模型中验证时场景：
 	 * 			0：任何状态下都进行验证 （默认）
-	 * 			1  添加
-	 * 			2  修改
+	 * 			self::MODEL_INSERT 1	插入
+	 * 			self::MODEL_UPDATE 2 	更新
 	 * 	@param1 字段
 	 * 	@param2 验证规则
 	 * 	@param3 错误消息
@@ -40,8 +40,27 @@ class AddModel extends Model{
 	 */
 	protected $_validate = array(
 		array('cid','require','',1,'',1),	//插入认证
-		array('cisdfd','require','',1,'',2),	//插入认证
+		array('cid','require','',1,'',2),	//插入认证
 	);
+
+
+	/**
+	 * 	自动完成
+	 * 	@param1 字段
+	 * 	@param2 规则
+	 * 	@param3 场景 ：默认0：全部
+	 * 			self::MODEL_INSERT 1	插入
+	 * 			self::MODEL_UPDATE 2 	更新
+	 * 	@param4 附加规则
+	 * 			function
+	 * 			string
+	 */
+	public $_auto = array(
+		array('addtime','time',self::MODEL_INSERT,'function'),
+		array('addtime','time',self::MODEL_UPDATE,'function'),
+	);
+
+
 
 
 

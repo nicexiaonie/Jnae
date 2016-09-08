@@ -1,6 +1,8 @@
 <?php
 namespace Core;
 
+use Core\Config;
+
 class Uri {
 	public $module_name = '';	//模块
 	public $directory_name = '';	//分组
@@ -12,10 +14,11 @@ class Uri {
 	private $protocol = '';
 
 	public function _initialize(){
+		Config::load('Uri');
+
+		$this->command();
 
 		//step1、解析URI
-			Config::load('Uri');
-
 			$protocol = $this->protocol = Config::get('uri/protocol');
 
 			$protocol = empty($protocol) ? 'AUTO' : $protocol;
@@ -64,6 +67,38 @@ class Uri {
 			if(!empty($this->controller_name)) define('CONTROLLER_NAME',$this->controller_name);
 			if(!empty($this->function_name)) define('FUNCTION_NAME',$this->function_name);
 
+	}
+
+	protected function command(){
+		/*
+		 * 解析命令行参数
+		 * 	命令行方问某个操作
+		 * 	PATH_INFO：
+		 *  php index.php --request-uri=/Demo/Index/Index/two?aa=1\&b=2
+		 *	QUERY_STRING：
+		 * 	php index.php --request-uri=/index.php?m=Demo\&d=Index\&c=Index\&f=two
+		 */
+		if(!empty($_SERVER['argv']) && !empty($_SERVER['argv'][1])){
+			$argv = $_SERVER['argv'];
+			array_shift($argv);
+			foreach($argv as $v){
+				$array = explode('=',$v,2);
+				switch($array[0]){
+					case '--request-uri':
+						$_SERVER['REQUEST_URI'] = $array[1];
+						break;
+					default:
+						break;
+				}
+			}
+			switch(Config::get('uri/protocol')){
+				case 'QUERY_STRING':
+					$param = $_SERVER['REQUEST_URI'];
+					$param =explode('?',$param,2);
+					$_SERVER['QUERY_STRING'] = $param[1];
+					break;
+			}
+		}
 	}
 
 
@@ -131,14 +166,14 @@ class Uri {
 	{
 		$uri = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');
 
+		parse_str($_SERVER['QUERY_STRING'], $_GET);
 
-		$return[] = $_GET[$this->config->item('module_trigger','uri')];
-		$return[] = $_GET[$this->config->item('directory_trigger','uri')];
-		$return[] = $_GET[$this->config->item('controller_trigger','uri')];
-		$return[] = $_GET[$this->config->item('function_trigger','uri')];
+		$return[] = $_GET[Config::get('uri/module_trigger')];
+		$return[] = $_GET[Config::get('uri/directory_trigger')];
+		$return[] = $_GET[Config::get('uri/controller_trigger')];
+		$return[] = $_GET[Config::get('uri/function_trigger')];
 
 		$return = implode('/',$return);
-		parse_str($_SERVER['QUERY_STRING'], $_GET);
 
 		return $this->_remove_relative_directory($return);
 	}

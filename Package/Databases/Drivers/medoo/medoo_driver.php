@@ -22,7 +22,9 @@ class medoo_driver implements Driver{
 		require_once($db_file);
 	}
 
-
+	/**
+	 * 	连接
+	 */
 	public function _connection(){
 		$db_config = $this->_db_config;
 		$config['database_type'] = $db_config['dbdriver'];
@@ -41,6 +43,7 @@ class medoo_driver implements Driver{
 			show_error('Message: ' .$e->getMessage());
 		}
 	}
+
 
 	public function _set_table($table){
 		if(!empty($table)) $this->_table = $table;
@@ -81,7 +84,6 @@ class medoo_driver implements Driver{
 		empty($table) ? $table = $this->_table : $table;
 		empty($fields) ? $fields = $this->_field : $fields;
 
-
 		$where = $this->_self_get_where();
 
 		$result = $this->db->select($table,$fields,$where);
@@ -114,14 +116,11 @@ class medoo_driver implements Driver{
 	}
 	public function save($data,$where=null){
 		empty($table) ? $table = $this->_table : $table;
-
 		empty($where) ? $where = $this->_where : $where;
-
 		if(empty($where)) {
 			$this->_error = 'Update operation, the where can\'t be empty!';
 			return false;
 		}
-
 		$result = $this->db->update($table,$data,$where);
 		return $result;
 	}
