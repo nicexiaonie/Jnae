@@ -114,7 +114,7 @@ class medoo_driver implements Driver{
 		$result = $this->db->insert($table,$data);
 		return $result;
 	}
-	public function save($data,$where=null){
+	public function update($data,$where=null){
 		empty($table) ? $table = $this->_table : $table;
 		empty($where) ? $where = $this->_where : $where;
 		if(empty($where)) {
@@ -128,10 +128,7 @@ class medoo_driver implements Driver{
 	public function delete(){
 		$table = $this->_table;
 		if(empty($this->_where)) return false;	//防止删除全部
-
 		$where = $this->_self_get_where();
-
-		show($where);
 		$result = $this->db->delete($table,$where);
 		return $result;
 	}

@@ -16,8 +16,14 @@ class Model extends Db{
 	public function __construct($db = null){
 		Config::load('db');
 		parent::__construct($db);
-		if(method_exists($this,'_initialize'))
+		if(method_exists($this,'_initialize')){
 			$this->_initialize();
+		}
+
+		$this->_getClassName();
+
+
+
 	}
 
 	/**
@@ -35,6 +41,7 @@ class Model extends Db{
 	 * 		调用控制器方法
 	 */
 	public function __call($key,$value){
+
 
 		//step1、决定操作哪个对象  优先级：1 驱动 2 db插件本身 3 app超级对象
 			$object = (object)array();
@@ -86,6 +93,9 @@ class Model extends Db{
 		$className = explode('\\',$className);
 		$name = array_pop($className);
 		$name = preg_replace('/Model$/','',$name);
+		$name = (preg_split("/(?=[A-Z])/", $name));
+		$name = array_filter($name);
+		$name = join('_',$name);
 		if(!empty($name)) $this->_db_driver->_set_table(strtolower($name));
 	}
 
@@ -107,6 +117,7 @@ class Model extends Db{
 		}
 
 		if(empty($data)) $data = Input::post();
+
 		//过滤字段
 		if(!empty($this->_fields) && is_array($this->_fields)){
 			foreach($data as $k=>&$v){
@@ -147,14 +158,19 @@ class Model extends Db{
 
 		if(!empty($this->_auto)){
 			foreach($this->_auto as $v){
+
 				if(!empty($v[2]) && $v[2] != $scene) continue;
 				if(!empty($v[0]) && !empty($v[1]) && empty($data[$v[0]])){
 					switch($v[3]){
 						case 'function':
-							$data[$v[0]] = $v[1]();
+							$data[$v[0]] = $v[1]($data);
 							break;
 						case 'field':
 							$data[$v[0]] = $data[$v[1]];
+							break;
+						case 'this':
+							if(method_exists($this,$v[1]))
+								$data[$v[0]] = $this->$v[1]($data);
 							break;
 						default:
 							$data[$v[0]] = $v[1];
@@ -175,11 +191,18 @@ class Model extends Db{
 	public function add($data = null){
 		if(empty($this->_db_driver)) show_error('This method(add) does not exist!');
 		$this->_getClassName();
+		if(method_exists($this,'before_add')){
+			$data = $this->before_add();
+		}
 		$data = $this->create($data,self::MODEL_INSERT);	//数据验证
 		$data = $this->_auto($data,self::MODEL_INSERT);	//自动完成
+
 		if($data == false) return false;
 		$result = $this->_db_driver->add($data);
-		if(!$result || empty($result) ||( is_array($result) && empty(array_filter($result)))){
+		if(method_exists($this,'after_add')){
+			$this->after_add();
+		}
+		if(!$result || empty($result) ||( is_array($result) && empty($result))){
 			$this->error = $this->_db_driver->error();
 			return false;
 		}
@@ -195,6 +218,9 @@ class Model extends Db{
 	public function save($data = null){
 		if(empty($this->_db_driver)) show_error('This method(add) does not exist!');
 		$this->_getClassName();
+		if(method_exists($this,'before_save')){
+			$this->before_save();
+		}
 		$data = $this->create($data,self::MODEL_UPDATE);	//自动验证
 		$data = $this->_auto($data,self::MODEL_UPDATE);	//自动完成
 		if($data == false) return false;
@@ -203,7 +229,10 @@ class Model extends Db{
 			$where[$this->_fields['major']] = $data[$this->_fields['major']];
 			$this->_db_driver->where($where);
 		}
-		$result = $this->_db_driver->save($data);
+		$result = $this->_db_driver->update($data);
+		if(method_exists($this,'after_save')){
+			$this->after_save();
+		}
 		if(!$result){
 			$this->error = $this->_db_driver->error();
 			return false;

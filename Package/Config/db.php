@@ -25,10 +25,12 @@ return array(
 		'database' => 'jnae',
 
 		//需要连接到数据库的用户名.
+		//'username' => 'jnae',
 		'username' => 'root',
 
 		//登陆数据库的密码.
 		'password' => 'cc1925612f',
+		//'password' => 'RZznZEWd',
 
 		//表前缀
 		'prefix'  =>   '',

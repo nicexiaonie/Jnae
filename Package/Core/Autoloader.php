@@ -32,14 +32,16 @@ class Autoloader{
 			}else{
 				$classPath = $className;
 			}
-
+		$is_load = false;
 		$dir_list = self::$param;
 		foreach($dir_list as $k=>$v){
 			$file = rtrim($v,'/').'/'.$classPath.self::$suffix;
 			if(is_file($file)){
+				$is_load = false;
 				return load($file);
 			}
 		}
+		if(!$is_load) show_error('Class does not exist：( '.$className.' )');
     }
 }
 

@@ -6,11 +6,47 @@
 namespace Demo\Controller\Library;
 
 use Core\Controller;
+use Library\Input;
 use Library\Validate;
+use View\View;
 
 class ValidateController extends Controller{
 
 	public function _initialize(){
+
+	}
+
+
+	public function index(){
+		$post = Input::post();
+
+		if(empty($post)){
+			$view = View::init();
+			$view->display();
+
+		}else{
+
+			$rule = array(
+				//array('title','require',''),
+				array('content','require','',1,0),
+
+			);
+			show($post);
+			$obj = Validate::make($rule);
+
+			$result = $obj->check($post);
+			if($result){
+				echo 'success';
+			}else{
+				echo $obj->error();
+			}
+
+
+
+
+		}
+
+
 
 	}
 

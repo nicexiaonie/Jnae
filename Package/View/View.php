@@ -41,11 +41,11 @@ class View {
 	 */
 	public static $cache_dir = '';
 
+	/**
+	 *  临时分配模版变量
+	 */
+	public static $assign = array();
 
-
-
-	//--------------------------------------------
-	//新版View
 
 	/**
 	 * 	初始化模版引擎
@@ -64,21 +64,24 @@ class View {
 			$view = new $class($value);
 
 		//step2、设置参数
+            #基础目录
 			if(empty(self::$basic_dir)) self::setBasicDir();
+            #缓存目录
 			if(empty(self::$temp_dir)) self::setTempDir();
+            #编译目录
 			if(empty(self::$compile_dir)) self::setCompileDir();
+            #缓存目录
 			if(empty(self::$cache_dir)) self::setCacheDir();
+            #模版文件
 			if(empty(self::$filename)) self::setFileName();
-			//show(self::$basic_dir);
-			//show(self::$temp_dir);
-			//show(self::$compile_dir);
-			//show(self::$cache_dir);
-			//show(self::$filename);
 
 		//step3、处理模版变量
 			Config::load('view');
 
 		return $view->run();
+	}
+	public static function assign($k,$v){
+		static::$assign[$k] = $v;
 	}
 
 	public static function display($filename){
@@ -95,7 +98,7 @@ class View {
 		$path = array();
 
 		if(!is_exist(Config::get('template_path'))){
-			//目录位置在各自应用下
+			//目录位置在各自应用目录下
 			$path[] = rtrim(APP_PATH,'/');
 		}else{
 			//自定义模版目录
@@ -117,7 +120,6 @@ class View {
 
 		$dir = join('/',$path).'/';
 
-		self::create_dir($dir);
 		return self::$basic_dir = $dir;
 
 	}
@@ -129,20 +131,17 @@ class View {
 
 		$dir = self::$basic_dir. join('/',$path).'/';
 
-		self::create_dir($dir);
 		self::$temp_dir = $dir;
 	}
 
 	private static function setCompileDir(){
 		$compile_dir = RUNTIME_DIR.'Compile/';	//编译目录
 
-		self::create_dir($compile_dir);
-
 		self::$compile_dir = $compile_dir;
 	}
 	private static function setCacheDir(){
 		$cache_dir = RUNTIME_DIR.'Cache/';	//缓存目录
-		self::create_dir($cache_dir);
+
 		self::$cache_dir = $cache_dir;
 	}
 	private static function setFileName(){
@@ -160,13 +159,6 @@ class View {
 				break;
 		}
 		self::$filename = $filename;
-	}
-
-
-	private static function create_dir($dir){
-		if(!empty($dir) && !is_dir($dir)){
-			create_dir($dir);
-		}
 	}
 
 

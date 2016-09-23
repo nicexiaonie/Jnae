@@ -331,7 +331,6 @@ class Validate{
 	protected function getRule($rule,$scene)
 	{
 
-
 		//step1、确定验证字段是否存在
 			if(empty($rule[0])){
 				return false;
@@ -347,12 +346,11 @@ class Validate{
 			}
 
 		//step3、根据验证规则，补全默认提示
-			/*
-			if(empty($rule[2])){
-				$rule[2] = str_replace(':attribute',$attribute,$this->typeMsg[$rule[1]]);
+			$this->message = null;
+			if(!empty($rule[2])){
 				$this->message = $rule[2];
 			}
-			*/
+
 
 		//step4、确定验证条件 默认是0 数据存在即验证
 			if(!isset($rule[3])){
@@ -385,24 +383,22 @@ class Validate{
 			}
 
 		//step7、确定提示消息
-			if($rule[4] !== false){
-				empty($rule['4']) ?
-					$this->message = '未知错误' :
+			if(empty($this->message)){
+				if(!empty($rule[4])){
 					$this->message = $this->typeMsg[$rule[4]];
-			}else{
-				empty($rule['1']) ?
-					$this->message = '未知错误' :
+				}elseif(!empty($rule[1])){
 					$this->message = $this->typeMsg[$rule[1]];
+				}else{
+					$this->message = "未知错误";
+				}
+				$this->message = str_replace(':attribute',$attribute,$this->message);
+				$this->message = str_replace(
+					':rule',
+					is_string($rule[1]) ?
+						$rule[1] :
+						implode(',',$rule[1]),
+					$this->message);
 			}
-
-		$this->message = str_replace(':attribute',$attribute,$this->message);
-
-		$this->message = str_replace(
-			':rule',
-			is_string($rule[1]) ?
-				$rule[1] :
-				implode(',',$rule[1]),
-			$this->message);
 
 		if($scene !== $rule[5] && $rule[5] !== 0) return false;
 

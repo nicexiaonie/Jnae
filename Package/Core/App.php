@@ -7,7 +7,6 @@ use \Core\Hook;
 use \Core\Handler;
 
 
-
 class App {
 
 	private static $instance;	//单例

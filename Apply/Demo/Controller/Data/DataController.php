@@ -29,7 +29,10 @@ class DataController extends Controller{
 		$m = D('Data/Add');
 		$data[] = $_POST;
 		$data[] = $_POST;
+
+
 		$result = $m->add($data);
+
 		if($result){
 			echo '成功';
 		}else{
@@ -57,7 +60,7 @@ class DataController extends Controller{
 	public function add(){
 
 
-		$m = M('add','default');
+		$m = D('Data/Add');
 
 		$result = $m->add();
 

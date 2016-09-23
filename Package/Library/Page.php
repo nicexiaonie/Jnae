@@ -2,6 +2,8 @@
 
 namespace Library;
 
+use Core\Config;
+
 class Page{
     public $firstRow; // 起始行数
     public $listRows; // 列表每页显示行数
@@ -32,7 +34,7 @@ class Page{
      * @param array $parameter  分页跳转的参数
      */
     public function __construct($totalRows, $listRows=20, $parameter = array()) {
-        C('VAR_PAGE') && $this->p = C('VAR_PAGE'); //设置分页参数名称
+        Config::get('VAR_PAGE') && $this->p = Config::get('VAR_PAGE'); //设置分页参数名称
         /* 基础设置 */
         $this->totalRows  = $totalRows; //设置总记录数
         $this->listRows   = $listRows;  //设置每页显示行数

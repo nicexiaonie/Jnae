@@ -56,9 +56,17 @@ class AddModel extends Model{
 	 * 			string
 	 */
 	public $_auto = array(
-		array('addtime','time',self::MODEL_INSERT,'function'),
-		array('addtime','time',self::MODEL_UPDATE,'function'),
+		array('addtime','aa',self::MODEL_INSERT,'this'),
+		//array('addtime','time',self::MODEL_UPDATE,'function'),
 	);
+
+	public function aa(){
+		return 111;
+
+	}
+
+
+
 
 
 

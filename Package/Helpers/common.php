@@ -79,19 +79,12 @@ function M($table = null , $db = false){
  */
 function D($value = null , $layer = null){
 	static $model_store;
-
 	if(empty($value)) return false;
-
 	$_get_instance = get_instance();	//引入app超级对象
-
 	$key_code = $value;	//模型标记
-
-	if($model_store[$key_code]) return $model_store[$key_code];	//如果此模型已被实例过则直接返回
-
+	if(!empty($model_store[$key_code])) return $model_store[$key_code];	//如果此模型已被实例过则直接返回
 	$value = explode(':',$value);
-
 	$module_name = $_get_instance->uri->module_name;	//当前模块
-
 	if(count($value) == 1){
 		//当前模块
 		$value = $value[0];
@@ -103,9 +96,7 @@ function D($value = null , $layer = null){
 	empty($layer) ? $layer = 'Model' : 1 ;
 	$class = '\\'.$module_name.'\\Model\\'.implode('\\',explode('/',$value)).$layer;
 
-	$model_store[$key_code] = new $class();
-
-	return $model_store[$key_code];
+	return $model_store[$key_code] = new $class();
 
 }
 
@@ -428,7 +419,7 @@ function U($value = null,$param = array()){
 
 		if(!empty($path)) $param = array_merge($path,$param);
 	}else{
-		$param = $path;
+		$param = empty($path) ? null : $path;
 	}
 
 	if(!empty($param)) $result .= '?' . (http_build_query($param));

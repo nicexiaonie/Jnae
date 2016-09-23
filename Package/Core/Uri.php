@@ -38,7 +38,8 @@ class Uri {
 						: $this->_parse_request_uri();
 					break;
 			}
-			$uri = rtrim($uri,'.html');
+			//$uri = rtrim($uri,'.html');
+			$uri = preg_replace('/\.html$/','',$uri);
 			$this->_set_uri_string($uri);
 
 		//step2、确定模块 分组  控制器 操作  并给予默认)
@@ -66,6 +67,7 @@ class Uri {
 			if(!empty($this->directory_name)) define('DIRECTORY_NAME',$this->directory_name);
 			if(!empty($this->controller_name)) define('CONTROLLER_NAME',$this->controller_name);
 			if(!empty($this->function_name)) define('FUNCTION_NAME',$this->function_name);
+
 
 	}
 

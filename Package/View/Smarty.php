@@ -58,9 +58,14 @@ class Smarty{
 		else
 			$filename .= Config::get('template_suffix');
 
-		//step1、分配style配置变量
+		//step1、分配
+			#style配置变量
 			$config = Config::get('view/variable');
 			foreach($config as $k=>$v){
+				$this->smarty->assign($k,$v);
+			}
+			#初始化变量
+			foreach(View::$assign as $k=>$v){
 				$this->smarty->assign($k,$v);
 			}
 		//step2、模版文件是否存在

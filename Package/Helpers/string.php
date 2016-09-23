@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * 生成UUID 单机使用
  * @access public
@@ -30,6 +32,73 @@ function keyGen() {
  */
 function output($value,$default = '----') {
 	return empty($value) ? $default : $value;
+}
+
+/**
+ * 单位转换
+ * @param $value 1kb,1k,1m,1M,1MB, 1K,1kb
+ * @param string $type  kb,k,b,gb
+ * @param bool $doc
+ * @param int $sprintf
+ * @return float|int|string
+ */
+function byte_convert($value,$type='M',$doc=true,$sprintf = 2){
+	$unit = $type;
+	$value = strtolower($value);
+	$type = strtolower($type);
+	preg_match('/[a-z|A-Z]*$/',$value,$valueUnit);
+	$value = intval(preg_replace('/[a-z|A-Z]*$/','',$value));
+	empty($valueUnit) ? $valueUnit = '' : $valueUnit = array_pop($valueUnit);
+
+	#转b
+	switch($valueUnit){
+		case 'bit':
+			$value = $value/8;
+			break;
+		case 'b':
+			break;
+		case 'kb':
+		case 'k':
+			$value = $value * 1024;
+			break;
+		case 'mb':
+		case 'm':
+			$value = $value * 1024 * 1024;
+			break;
+		case 'gb':
+		case 'g':
+			$value = $value * 1024 * 1024 * 1024;
+			break;
+		case 'tb':
+		case 't':
+			$value = $value * 1024 * 1024 * 1024 * 1024;
+			break;
+	}
+	switch($type){
+		case 'bit':
+			$value = $value*8;
+			break;
+		case 'b':
+			break;
+		case 'kb':
+		case 'k':
+			$value = $value / 1024;
+			break;
+		case 'mb':
+		case 'm':
+			$value = $value / 1024 / 1024;
+			break;
+		case 'gb':
+		case 'g':
+			$value = $value / 1024 / 1024 / 1024;
+			break;
+		case 'tb':
+		case 't':
+			$value = $value / 1024 / 1024 / 1024 / 1024;
+			break;
+	}
+	if(is_float($value)) $value = sprintf("%.2f", $value);
+	return ($doc == true) ? $value.$unit : $value;
 }
 
 /**

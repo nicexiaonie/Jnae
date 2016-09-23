@@ -19,10 +19,10 @@ return array(
 
 
 	'OSS_1'	=>	array(
-		 'accessKeyId'	=>	"@@@@@@@@@@@",
-		 'accessKeySecret'	=>	"@@@@@@@@@@@@@",
-		 'endpoint'	=>	"@@@@@@@@@@@",
-		 'bucket'	=>	'@@@@@@@@@@@@@@@',
+		 'accessKeyId'	=>	"@@@@@@@@@@@@@@",
+		 'accessKeySecret'	=>	"@@@@@@@@@@@@",
+		 'endpoint'	=>	"@@@@@@@@@@@@@@",
+		 'bucket'	=>	'@@@@@@@@@@@@@@@@',
 	),
 
 );

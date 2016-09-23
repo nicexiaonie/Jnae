@@ -18,7 +18,7 @@ interface Driver {
 	public function delete();		//删除
 	public function order($order);		//排序
 	public function page($p=null, $page=null);
-	public function save($data);	//修改
+	public function update($data);	//修改
 
 
 
